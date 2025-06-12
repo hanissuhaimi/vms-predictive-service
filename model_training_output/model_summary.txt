@@ -1,0 +1,31 @@
+
+VMS MODEL TRAINING SUMMARY
+=========================
+
+Training Date: 2025-06-10 10:09:25
+Training Time: 1030.40 seconds
+Final Accuracy: 0.915
+
+Dataset:
+- Training samples: 409,316
+- Test samples: 102,329
+- Features used: 50
+- Classes: 12
+
+Performance:
+- Accuracy: 91.5%
+- Precision: 91.8%
+- Recall: 91.5%
+- F1-Score: 91.3%
+
+Model Details:
+- Algorithm: Gradient Boosting Classifier
+- Estimators: 80
+- Learning Rate: 0.1
+- Max Depth: 8
+
+Files Generated:
+- maintenance_prediction_model.pkl
+- confusion_matrix.png
+- feature_importance.csv
+- feature_importance.png
