@@ -1,45 +1,78 @@
-/vendor
-/node_modules
-/public/hot
-/public/storage
-/storage/*.key
-/storage/app/public
-/storage/framework/cache/data
-/storage/framework/sessions
-/storage/framework/testing
-/storage/framework/views
-/storage/logs
+# Laravel .gitignore for VMS Project
+
+# Environment files (NEVER commit these!)
 .env
 .env.backup
 .env.production
-.phpunit.result.cache
-Homestead.json
-Homestead.yaml
-npm-debug.log
-yarn-error.log
-/.idea
-/.vscode
+.env.local
 
-# Python specific
+# Dependencies
+/node_modules
+/vendor
+
+# Laravel specific
+/bootstrap/cache/*.php
+/storage/*.key
+/storage/logs/*.log
+/storage/app/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+!/storage/app/.gitkeep
+!/storage/app/public/.gitkeep
+
+# Laravel Mix / Vite
+/public/hot
+/public/storage
+/public/css/app.css
+/public/js/app.js
+/public/mix-manifest.json
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Python ML files (if any)
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
-.Python
-env/
-venv/
-.venv
-pip-log.txt
-pip-delete-this-directory.txt
+*.pkl
+*.joblib
 
-# Model files (optional - might be too large)
-# model_training_output/*.pkl
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Debug/test files
-test_*.py
-test_*.php
-debug_*.py
+# Cache
+.cache
+.temp
 
-# OS specific
-.DS_Store
-Thumbs.db
+# Database
+*.sqlite
+*.sqlite3
+
+# Backup files
+*.bak
+*.backup
+
+# Temporary files
+*.tmp
+*.temp
+
+# Don't commit sensitive ML model files
+/model_training_output/*.pkl
+/python/__pycache__/

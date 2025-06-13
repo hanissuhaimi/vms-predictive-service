@@ -1,0 +1,2 @@
+IndexName	IndexType	ColumnName
+PK_ServiceRequest	CLUSTERED	ID
