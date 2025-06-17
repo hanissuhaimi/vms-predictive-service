@@ -76,7 +76,7 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                @if($request->Odometer)
+                                                @if(is_numeric($request->Odometer))
                                                     <small>{{ number_format($request->Odometer) }} KM</small>
                                                 @else
                                                     <span class="text-muted">-</span>
