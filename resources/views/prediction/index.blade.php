@@ -7,8 +7,8 @@
     <div class="col-lg-8">
         <div class="card">
             <div class="card-header bg-primary text-white text-center">
-                <h3><i class="fas fa-tools"></i> New Maintenance Request</h3>
-                <p class="mb-0">Just fill in what you know - we'll estimate the rest!</p>
+                <h3><i class="fas fa-car-side"></i> Fleet Maintenance Prediction</h3>
+                <p class="mb-0">Enter vehicle details to predict upcoming maintenance needs</p>
             </div>
             
             <div class="card-body">
@@ -31,135 +31,178 @@
                 <form action="{{ route('prediction.predict') }}" method="POST">
                     @csrf
                     
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h5><i class="fas fa-edit"></i> What's the problem?</h5>
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
                             
-                            <div class="mb-3">
-                                <label for="description" class="form-label">Describe the issue:</label>
-                                <textarea class="form-control" id="description" name="description" rows="4" 
-                                    placeholder="Example: brake noise, flat tire, engine won't start, routine service, oil change..." 
-                                    required>{{ old('description') }}</textarea>
-                                <div class="form-text">Describe in your own words - English or Bahasa Malaysia</div>
+                            <!-- Vehicle Number Input -->
+                            <div class="mb-4">
+                                <label for="vehicle_number" class="form-label">
+                                    <i class="fas fa-truck"></i> Vehicle Number Plate
+                                </label>
+                                <input type="text" 
+                                       class="form-control form-control-lg" 
+                                       id="vehicle_number" 
+                                       name="vehicle_number" 
+                                       value="{{ old('vehicle_number') }}" 
+                                       placeholder="e.g., VEK4613"
+                                       required>
+                                <div class="form-text">Enter the fleet vehicle's registration number</div>
                             </div>
-                            
-                            <div class="mb-3">
-                                <label for="odometer" class="form-label"><i class="fas fa-tachometer-alt"></i> Current Mileage (KM)</label>
-                                <input type="number" class="form-control" id="odometer" name="odometer" 
-                                    min="1" value="{{ old('odometer', 200000) }}" required>
-                                <div class="form-text">What's showing on your odometer?</div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <h5><i class="fas fa-car"></i> Vehicle Info</h5>
-                            
-                            <div class="mb-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="auto_detect_priority" checked>
-                                    <label class="form-check-label" for="auto_detect_priority">
-                                        <i class="fas fa-robot"></i> Auto-detect urgency
-                                    </label>
-                                </div>
-                                <div class="form-text">Let AI determine urgency from your description</div>
-                            </div>
-                            
-                            <div id="priority_select" class="mb-3" style="display: none;">
-                                <label for="priority" class="form-label">How urgent?</label>
-                                <select class="form-control" id="priority" name="priority">
-                                    <option value="1" {{ old('priority', 1) == 1 ? 'selected' : '' }}>🔴 Critical - Emergency</option>
-                                    <option value="2" {{ old('priority') == 2 ? 'selected' : '' }}>🟠 High - Important</option>
-                                    <option value="3" {{ old('priority') == 3 ? 'selected' : '' }}>🟡 Normal - Standard</option>
-                                    <option value="0" {{ old('priority') == 0 ? 'selected' : '' }}>⚪ Low - Routine</option>
-                                </select>
-                            </div>
-                            
-                            <div id="priority_display" class="alert alert-info mb-3">
-                                Auto-detected: 🔴 Critical
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="number_plate" class="form-label"><i class="fas fa-id-card"></i> Vehicle Number Plate</label>
-                                <input type="text" class="form-control" id="number_plate" name="number_plate" 
-                                    value="{{ old('number_plate', 'WGW1349') }}" required>
-                                <div class="form-text">Enter your vehicle's number plate (e.g., WGW1349)</div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Collapsible Advanced Options -->
-                    <div class="accordion mt-3" id="advancedOptions">
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingAdvanced">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
-                                    data-bs-target="#collapseAdvanced" aria-expanded="false">
-                                    <i class="fas fa-cogs"></i> &nbsp; More Details (Optional)
-                                </button>
-                            </h2>
-                            <div id="collapseAdvanced" class="accordion-collapse collapse" data-bs-parent="#advancedOptions">
-                                <div class="accordion-body">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="service_count" class="form-label"><i class="fas fa-wrench"></i> How many times serviced before?</label>
-                                                <input type="number" class="form-control" id="service_count" name="service_count" 
-                                                    min="2" max="2704" value="{{ old('service_count', 200) }}" required>
-                                                <div class="form-text">We estimated based on your mileage</div>
-                                            </div>
-                                            
-                                            <div class="mb-3">
-                                                <label for="building_encoded" class="form-label"><i class="fas fa-map-marker-alt"></i> Where will you take it?</label>
-                                                <select class="form-control" id="building_encoded" name="building_encoded" required>
-                                                    <option value="2" {{ old('building_encoded', 2) == 2 ? 'selected' : '' }}>Main Workshop</option>
-                                                    <option value="3" {{ old('building_encoded') == 3 ? 'selected' : '' }}>Branch Workshop</option>
-                                                    <option value="1" {{ old('building_encoded') == 1 ? 'selected' : '' }}>Service Center</option>
-                                                    <option value="6" {{ old('building_encoded') == 6 ? 'selected' : '' }}>Repair Shop</option>
-                                                    <option value="7" {{ old('building_encoded') == 7 ? 'selected' : '' }}>Maintenance Bay</option>
-                                                    <option value="0" {{ old('building_encoded') == 0 ? 'selected' : '' }}>Other Location</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-6">
-                                            <div class="alert alert-info">
-                                                <h6><i class="fas fa-info-circle"></i> Additional Info</h6>
-                                                <p class="mb-1">✅ Request type and status are automatically determined from your problem description.</p>
-                                                <p class="mb-0">💡 This helps our AI give you the most accurate diagnosis.</p>
-                                            </div>
-                                        </div>
+                            <!-- Current Mileage Input -->
+                            <div class="mb-4">
+                                <label for="current_mileage" class="form-label">
+                                    <i class="fas fa-tachometer-alt"></i> Current Mileage (KM)
+                                </label>
+                                <input type="number" 
+                                    class="form-control form-control-lg @error('current_mileage') is-invalid @enderror" 
+                                    id="current_mileage" 
+                                    name="current_mileage" 
+                                    value="{{ old('current_mileage') }}" 
+                                    min="1" 
+                                    max="2000000"
+                                    placeholder="e.g., 625000"
+                                    required>
+                                
+                                @error('current_mileage')
+                                    <div class="invalid-feedback">
+                                        <strong>{{ $message }}</strong>
                                     </div>
+                                @enderror
+                                
+                                <div class="form-text">
+                                    💡 Enter the current odometer reading from your vehicle dashboard
+                                </div>
+                                
+                                <!-- Helpful mileage guide -->
+                                <div class="mt-2">
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle"></i> 
+                                        <strong>Fleet Vehicle Ranges:</strong> 
+                                        New (0-100K) | Active (100K-500K) | High-Usage (500K+)
+                                    </small>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <!-- Timing Section -->
-                    <div class="row mt-3">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="request_date" class="form-label"><i class="fas fa-calendar"></i> Request Date</label>
-                                <input type="date" class="form-control" id="request_date" name="request_date" 
-                                    value="{{ old('request_date', date('Y-m-d')) }}" required>
+                            <!-- Submit Button -->
+                            <div class="text-center mb-4">
+                                <button type="submit" class="btn btn-primary btn-lg px-5">
+                                    <i class="fas fa-magic"></i> Analyze Fleet Vehicle
+                                </button>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="response_days" class="form-label"><i class="fas fa-clock"></i> How urgent? (days)</label>
-                                <input type="number" class="form-control" id="response_days" name="response_days" 
-                                    min="0" value="{{ old('response_days', 1) }}" required>
-                                <div class="form-text">0 = Today, 1 = Tomorrow, etc.</div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="text-center mt-4">
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="fas fa-magic"></i> Analyze My Vehicle Problem
-                        </button>
+                            @if ($errors->has('vehicle_number'))
+                                <div class="alert alert-danger">
+                                    <h5><i class="fas fa-exclamation-triangle"></i> Vehicle Not Found</h5>
+                                    <p>{{ $errors->first('vehicle_number') }}</p>
+                                    <p><strong>Suggestions:</strong></p>
+                                    <ul>
+                                        <li>Double-check the vehicle number spelling</li>
+                                        <li>Ensure the vehicle is registered in the fleet management system</li>
+                                        <li>Contact fleet manager if vehicle should be in the system</li>
+                                    </ul>
+                                </div>
+                            @endif
+
+                            @if (session('error'))
+                                <div class="alert alert-warning">
+                                    <h5><i class="fas fa-info-circle"></i> Notice</h5>
+                                    <p>{{ session('error') }}</p>
+                                </div>
+                            @endif
+                        </div>
                     </div>
                 </form>
+
+                <!-- Sample Fleet Vehicles -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h6><i class="fas fa-list"></i> Fleet Test Vehicles</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 mb-2">
+                                <button class="btn btn-outline-primary btn-sm w-100" 
+                                        onclick="fillSample('VEK4613', 95000)">
+                                    VEK4613 - 95,000 KM<br>
+                                    <small>733 service records</small>
+                                </button>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <button class="btn btn-outline-secondary btn-sm w-100" 
+                                        onclick="fillSample('WSG7937', 950000)">
+                                    WSG7937 - 950,000 KM<br>
+                                    <small>1,337 service records</small>
+                                </button>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <button class="btn btn-outline-success btn-sm w-100" 
+                                        onclick="fillSample('FLEET999', 50000)">
+                                    FLEET999 - 50,000 KM<br>
+                                    <small>Test unknown vehicle</small>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+// Essential JavaScript functions
+function fillSample(vehicle, mileage) {
+    document.getElementById('vehicle_number').value = vehicle;
+    document.getElementById('current_mileage').value = mileage;
+}
+
+// Add real-time validation feedback
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Fleet prediction form loaded successfully');
+    
+    const mileageInput = document.getElementById('current_mileage');
+    if (mileageInput) {
+        mileageInput.addEventListener('input', function() {
+            const value = parseInt(this.value);
+            
+            if (value && value < 1000) {
+                this.classList.add('is-invalid');
+                this.classList.remove('is-valid');
+            } else if (value && value > 0) {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            } else {
+                this.classList.remove('is-invalid', 'is-valid');
+            }
+        });
+    }
+});
+</script>
+
+<style>
+.is-valid {
+    border-color: #28a745 !important;
+}
+
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+.form-control-lg {
+    font-size: 1.125rem;
+}
+
+@media (max-width: 768px) {
+    .btn-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .btn-group .btn {
+        margin-right: 0;
+    }
+}
+</style>
 @endsection

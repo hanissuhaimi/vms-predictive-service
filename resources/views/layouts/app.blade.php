@@ -3,11 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'VMS Prediction Service')</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>@yield('title', 'VMS Fleet Prediction Service')</title>
+    
+    <!-- Local Bootstrap CSS -->
+    <link href="{{ asset('bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    
+    <!-- Font Awesome and Bootstrap Icons from CDN -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-
+    
+    <!-- Custom Styles -->
     <style>
         body {
             background-color: #f8f9fa;
@@ -48,13 +53,26 @@
         .time-card { background-color: #fff3e0; }
         .cost-card { background-color: #e8f5e8; }
         .service-card { background-color: #f3e5f5; }
+        .alert-lg {
+            padding: 1.5rem;
+            font-size: 1.1rem;
+        }
+        @media print {
+            .btn, .alert {
+                display: none !important;
+            }
+            .card {
+                border: 1px solid #ddd !important;
+                page-break-inside: avoid;
+            }
+        }
     </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" href="{{ route('prediction.index') }}">
-                <i class="fas fa-car"></i> VMS Prediction Service
+                <i class="fas fa-truck"></i> VMS Fleet Prediction Service
             </a>
         </div>
     </nav>
@@ -63,82 +81,9 @@
         @yield('content')
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Auto-detect priority based on description
-        function autoDetectPriority() {
-            const description = document.getElementById('description').value.toLowerCase();
-            const prioritySelect = document.getElementById('priority');
-            const autoDetectCheck = document.getElementById('auto_detect_priority');
-            
-            if (autoDetectCheck.checked) {
-                let priority = 1; // Default to Critical
-                
-                if (description.includes('emergency') || description.includes('urgent') || 
-                    description.includes('breakdown') || description.includes('tidak boleh') || 
-                    description.includes('rosak teruk') || description.includes('accident')) {
-                    priority = 1; // Critical
-                } else if (description.includes('noise') || description.includes('problem') || 
-                          description.includes('issue') || description.includes('bunyi') || 
-                          description.includes('masalah')) {
-                    priority = 2; // High
-                } else {
-                    priority = 1; // Default to Critical
-                }
-                
-                prioritySelect.value = priority;
-                updatePriorityDisplay(priority);
-            }
-        }
-
-        function updatePriorityDisplay(priority) {
-            const priorityText = {
-                1: "🔴 Critical",
-                2: "🟠 High", 
-                3: "🟡 Normal",
-                0: "⚪ Low"
-            };
-            
-            const display = document.getElementById('priority_display');
-            if (display) {
-                display.textContent = "Auto-detected: " + (priorityText[priority] || "🔴 Critical");
-            }
-        }
-
-        function togglePriorityMode() {
-            const autoDetect = document.getElementById('auto_detect_priority').checked;
-            const prioritySelect = document.getElementById('priority_select');
-            const priorityDisplay = document.getElementById('priority_display');
-            
-            if (autoDetect) {
-                prioritySelect.style.display = 'none';
-                priorityDisplay.style.display = 'block';
-                autoDetectPriority();
-            } else {
-                prioritySelect.style.display = 'block';
-                priorityDisplay.style.display = 'none';
-            }
-        }
-
-        function estimateServiceCount() {
-            const odometer = document.getElementById('odometer').value;
-            const serviceCountInput = document.getElementById('service_count');
-            
-            if (odometer) {
-                const estimated = Math.max(2, Math.min(2704, Math.floor(odometer / 15000)));
-                serviceCountInput.value = estimated;
-            }
-        }
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            togglePriorityMode();
-            
-            // Add event listeners
-            document.getElementById('description').addEventListener('input', autoDetectPriority);
-            document.getElementById('auto_detect_priority').addEventListener('change', togglePriorityMode);
-            document.getElementById('odometer').addEventListener('input', estimateServiceCount);
-        });
-    </script>
+    <!-- Local Bootstrap JavaScript -->
+    <script src="{{ asset('bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    
+    <!-- NO OTHER JAVASCRIPT - Clean and simple -->
 </body>
 </html>
