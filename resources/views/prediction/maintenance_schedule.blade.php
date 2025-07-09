@@ -29,7 +29,7 @@
         </div>
 
         <!-- 🎯 PRIORITY ALERT - MOVED TO TOP -->
-        @if($recommendations['priority'] == 'immediate' || $recommendations['priority'] == 'critical_safety')
+        {{-- @if($recommendations['priority'] == 'immediate' || $recommendations['priority'] == 'critical_safety')
             <div class="alert alert-danger alert-lg mb-4 position-relative">
                 <div class="row align-items-center">
                     <div class="col-md-8">
@@ -60,7 +60,45 @@
                 <h5><i class="fas fa-check-circle"></i> ✅ ROUTINE MAINTENANCE</h5>
                 <p class="mb-0">Vehicle is following good maintenance patterns based on {{ $vehicleHistory['total_services'] }} service records.</p>
             </div>
-        @endif
+        @endif --}}
+
+        <!-- Service Schedule Prediction -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card border-primary">
+                    <div class="card-header bg-primary text-white">
+                        <h5><i class="fas fa-calendar-alt"></i> Next Routine Service</h5>
+                    </div>
+                    <div class="card-body">
+                        <h3 class="text-primary">{{ number_format($serviceSchedule['next_routine']['mileage']) }} KM</h3>
+                        <p class="mb-2">
+                            <strong>Distance:</strong> {{ number_format($serviceSchedule['next_routine']['km_remaining']) }} KM to go
+                        </p>
+                        <p class="mb-2">
+                            <strong>Estimated:</strong> {{ $serviceSchedule['days_estimate'] }}
+                        </p>
+                        <p class="text-muted">{{ $serviceSchedule['next_routine']['description'] }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card border-success">
+                    <div class="card-header bg-success text-white">
+                        <h5><i class="fas fa-tools"></i> Next Major Service</h5>
+                    </div>
+                    <div class="card-body">
+                        <h3 class="text-success">{{ number_format($serviceSchedule['next_major']['mileage']) }} KM</h3>
+                        <p class="mb-2">
+                            <strong>Distance:</strong> {{ number_format($serviceSchedule['next_major']['km_remaining']) }} KM to go
+                        </p>
+                        <p class="mb-2">
+                            <strong>Type:</strong> {{ $serviceSchedule['next_major']['type'] }}
+                        </p>
+                        <p class="text-muted">{{ $serviceSchedule['next_major']['description'] }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- 💰 COST & TIME ESTIMATE - MOVED UP -->
         <div class="row mb-4">
@@ -168,7 +206,13 @@
                                             @if($part['last_service_details']['contractor'] !== 'No contractor')
                                             <p class="mb-1"><strong>Contractor:</strong> {{ $part['last_service_details']['contractor'] }}</p>
                                             @endif
-                                            <p class="mb-1"><strong>Location:</strong> {{ $part['last_service_details']['building'] }} - {{ $part['last_service_details']['department'] }}</p>
+                                            <p class="mb-1"><strong>Depot:</strong> 
+                                                @if(isset($part['last_service_details']['depot_info']) && is_array($part['last_service_details']['depot_info']))
+                                                    {{ $part['last_service_details']['depot_info']['name'] }} ({{ $part['last_service_details']['depot_info']['id'] }})
+                                                @else
+                                                    {{ $part['last_service_details']['building'] ?? 'Unknown' }}
+                                                @endif
+                                            </p>
                                             <p class="mb-1"><strong>Status:</strong> 
                                                 <span class="badge bg-success">{{ $part['last_service_details']['status'] }}</span>
                                             </p>
@@ -280,7 +324,13 @@
                                         </div>
                                         <div class="col-md-6">
                                             <p class="mb-1"><strong>Technician:</strong> {{ $part['last_service_details']['serviced_by'] }}</p>
-                                            <p class="mb-1"><strong>Location:</strong> {{ $part['last_service_details']['building'] }}</p>
+                                            <p class="mb-1"><strong>Depot:</strong> 
+                                                @if(isset($part['last_service_details']['depot_info']))
+                                                    {{ $part['last_service_details']['depot_info']['name'] }} ({{ $part['last_service_details']['depot_info']['id'] }})
+                                                @else
+                                                    {{ $part['last_service_details']['building'] ?? 'Unknown' }}
+                                                @endif
+                                            </p>
                                             @if($part['last_service_details']['contractor'] !== 'No contractor')
                                             <p class="mb-1"><strong>Contractor:</strong> {{ $part['last_service_details']['contractor'] }}</p>
                                             @endif
@@ -397,6 +447,9 @@
                                                 @if($part['last_service_details']['serviced_by'] !== 'Unknown')
                                                 <p class="mb-1"><small><strong>Tech:</strong> {{ $part['last_service_details']['serviced_by'] }}</small></p>
                                                 @endif
+                                                @if(isset($part['last_service_details']['depot_info']))
+                                                <p class="mb-1"><small><strong>Depot:</strong> {{ $part['last_service_details']['depot_info']['name'] }}</small></p>
+                                                @endif
                                                 @if($part['last_service_details']['contractor'] !== 'No contractor')
                                                 <p class="mb-1"><small><strong>Contractor:</strong> {{ $part['last_service_details']['contractor'] }}</small></p>
                                                 @endif
@@ -473,6 +526,9 @@
                                                 <span class="badge bg-secondary">{{ $part['last_service_details']['service_type'] }}</span>
                                                 @if($part['last_service_details']['contractor'] !== 'No contractor')
                                                     <span class="badge bg-primary">{{ Str::limit($part['last_service_details']['contractor'], 15) }}</span>
+                                                @endif
+                                                @if(isset($part['last_service_details']['depot_info']))
+                                                    <span class="badge bg-secondary">{{ $part['last_service_details']['depot_info']['id'] }}</span>
                                                 @endif
                                             </p>
                                             @if($part['last_service_details']['description'] !== 'No description')
@@ -672,64 +728,6 @@
             </div>
         </div>
 
-        <!-- Service Schedule Prediction -->
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <div class="card border-primary">
-                    <div class="card-header bg-primary text-white">
-                        <h5><i class="fas fa-calendar-alt"></i> Next Routine Service</h5>
-                    </div>
-                    <div class="card-body">
-                        <h3 class="text-primary">{{ number_format($serviceSchedule['next_routine']['mileage']) }} KM</h3>
-                        <p class="mb-2">
-                            <strong>Distance:</strong> {{ number_format($serviceSchedule['next_routine']['km_remaining']) }} KM to go
-                        </p>
-                        <p class="mb-2">
-                            <strong>Estimated:</strong> {{ $serviceSchedule['days_estimate'] }}
-                        </p>
-                        <p class="text-muted">{{ $serviceSchedule['next_routine']['description'] }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card border-success">
-                    <div class="card-header bg-success text-white">
-                        <h5><i class="fas fa-tools"></i> Next Major Service</h5>
-                    </div>
-                    <div class="card-body">
-                        <h3 class="text-success">{{ number_format($serviceSchedule['next_major']['mileage']) }} KM</h3>
-                        <p class="mb-2">
-                            <strong>Distance:</strong> {{ number_format($serviceSchedule['next_major']['km_remaining']) }} KM to go
-                        </p>
-                        <p class="mb-2">
-                            <strong>Type:</strong> {{ $serviceSchedule['next_major']['type'] }}
-                        </p>
-                        <p class="text-muted">{{ $serviceSchedule['next_major']['description'] }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ENHANCED FEATURES SECTION -->
-        @if(isset($systemEnhancement))
-        <div class="alert alert-success mb-4">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h5><i class="fas fa-rocket"></i> Enhanced System Active - Version {{ $systemEnhancement['version'] }}</h5>
-                    <p class="mb-0">
-                        <strong>Active Enhancements:</strong> 
-                        @foreach($systemEnhancement['enhancements_active'] as $enhancement)
-                            <span class="badge bg-success me-1">{{ ucwords(str_replace('_', ' ', $enhancement)) }}</span>
-                        @endforeach
-                    </p>
-                </div>
-                <div class="col-md-4 text-md-end">
-                    <small class="text-muted">Processing Time: {{ $systemEnhancement['processing_time'] }}</small>
-                </div>
-            </div>
-        </div>
-        @endif
-
         <!-- Recent Maintenance History - MOVED OUT OF COLLAPSIBLE -->
         <div class="card mb-4">
             <div class="card-header bg-secondary text-white">
@@ -805,139 +803,6 @@
                 @endif
             </div>
         </div>
-
-        <!-- COLLAPSIBLE DETAILED SECTIONS -->
-        <div class="accordion mb-4" id="detailedAccordion">
-            
-            {{-- ENHANCED VALIDATION RESULTS --}}
-            @if(isset($advancedValidation) && isset($advancedValidation['layers_passed']))
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="validationHeading">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#validationCollapse">
-                        <i class="fas fa-shield-check me-2"></i> Advanced Validation Results
-                    </button>
-                </h2>
-                <div id="validationCollapse" class="accordion-collapse collapse" data-bs-parent="#detailedAccordion">
-                    <div class="accordion-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6>Validation Layers Passed:</h6>
-                                <div class="list-group list-group-flush">
-                                    @foreach($advancedValidation['layers_passed'] as $layer)
-                                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                                        {{ ucwords(str_replace('_', ' ', $layer)) }}
-                                        <span class="badge bg-success rounded-pill">✓</span>
-                                    </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="text-center">
-                                    <div class="circular-progress-validation bg-success" style="--progress: {{ $advancedValidation['validation_score'] ?? 100 }};">
-                                        <span class="h4 text-success">{{ $advancedValidation['validation_score'] ?? 100 }}</span>
-                                    </div>
-                                    <div class="mt-2">
-                                        <strong>Validation Score</strong><br>
-                                        <small class="text-muted">{{ $advancedValidation['message'] }}</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @endif
-
-            {{-- SAFETY ANALYSIS --}}
-            @if(isset($safetyAnalysis))
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="safetyHeading">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#safetyCollapse">
-                        <i class="fas fa-shield-alt me-2"></i> Safety-Critical Systems Analysis
-                    </button>
-                </h2>
-                <div id="safetyCollapse" class="accordion-collapse collapse" data-bs-parent="#detailedAccordion">
-                    <div class="accordion-body">
-                        <div class="row mb-3">
-                            <div class="col-md-8">
-                                <h6>Safety Score: {{ $safetyAnalysis['overall_safety_score'] }}/100</h6>
-                                <span class="badge bg-{{ $safetyAnalysis['breakdown_risk'] === 'critical' ? 'danger' : ($safetyAnalysis['breakdown_risk'] === 'high' ? 'warning' : 'success') }}">
-                                    {{ ucfirst($safetyAnalysis['breakdown_risk']) }} Risk
-                                </span>
-                            </div>
-                        </div>
-                        
-                        @if(!empty($safetyAnalysis['safety_systems']))
-                        <div class="row">
-                            @foreach($safetyAnalysis['safety_systems'] as $systemName => $systemData)
-                            <div class="col-md-6 col-lg-3 mb-3">
-                                <div class="card h-100 border-{{ $systemData['risk_level'] === 'critical' ? 'danger' : ($systemData['risk_level'] === 'high' ? 'warning' : ($systemData['risk_level'] === 'medium' ? 'info' : 'success')) }}">
-                                    <div class="card-body text-center">
-                                        <h6 class="card-title">{{ ucwords(str_replace('_', ' ', $systemName)) }}</h6>
-                                        <div class="progress mb-2" style="height: 20px;">
-                                            <div class="progress-bar bg-{{ $systemData['safety_score'] >= 80 ? 'success' : ($systemData['safety_score'] >= 60 ? 'warning' : 'danger') }}" 
-                                                 style="width: {{ $systemData['safety_score'] }}%">
-                                                {{ $systemData['safety_score'] }}%
-                                            </div>
-                                        </div>
-                                        <span class="badge bg-{{ $systemData['risk_level'] === 'critical' ? 'danger' : ($systemData['risk_level'] === 'high' ? 'warning' : ($systemData['risk_level'] === 'medium' ? 'info' : 'success')) }}">
-                                            {{ ucfirst($systemData['risk_level']) }} Risk
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            @endforeach
-                        </div>
-                        @endif
-                    </div>
-                </div>
-            </div>
-            @endif
-
-            {{-- COST ANALYSIS --}}
-            @if(isset($costAnalysis))
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="costHeading">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#costCollapse">
-                        <i class="fas fa-calculator me-2"></i> Predictive Cost Analytics
-                    </button>
-                </h2>
-                <div id="costCollapse" class="accordion-collapse collapse" data-bs-parent="#detailedAccordion">
-                    <div class="accordion-body">
-                        @if(!empty($costAnalysis['cost_breakdown']))
-                        <div class="table-responsive mb-4">
-                            <table class="table table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>Item</th>
-                                        <th>Urgency</th>
-                                        <th>Cost Range</th>
-                                        <th>Reason</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($costAnalysis['cost_breakdown'] as $item)
-                                    <tr>
-                                        <td><strong>{{ $item['item'] }}</strong></td>
-                                        <td>
-                                            <span class="badge bg-{{ $item['urgency'] === 'immediate' ? 'danger' : ($item['urgency'] === 'soon' ? 'warning' : 'info') }}">
-                                                {{ ucfirst($item['urgency']) }}
-                                            </span>
-                                        </td>
-                                        <td>RM {{ number_format($item['cost_range']['min']) }} - {{ number_format($item['cost_range']['max']) }}</td>
-                                        <td><small>{{ $item['reason'] }}</small></td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                        @endif
-                    </div>
-                </div>
-            </div>
-            @endif
-        </div>
-
     </div>
 </div>
 
