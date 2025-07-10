@@ -7,7 +7,7 @@
     <div class="col-lg-8">
         <div class="card">
             <div class="card-header bg-primary text-white text-center">
-                <h3><i class="fas fa-car-side"></i> Fleet Maintenance Prediction</h3>
+                <h3><i class="fas fa-car-side"></i> Vehicle Maintenance Prediction</h3>
                 <p class="mb-0">Enter vehicle details to predict upcoming maintenance needs</p>
             </div>
             
@@ -46,7 +46,7 @@
                                        value="{{ old('vehicle_number') }}" 
                                        placeholder="e.g., VEK4613"
                                        required>
-                                <div class="form-text">Enter the fleet vehicle's registration number</div>
+                                <div class="form-text">Enter the vehicle's registration number</div>
                             </div>
 
                             <!-- Current Mileage Input -->
@@ -78,7 +78,7 @@
                                 <div class="mt-2">
                                     <small class="text-muted">
                                         <i class="fas fa-info-circle"></i> 
-                                        <strong>Fleet Vehicle Ranges:</strong> 
+                                        <strong>Vehicle Ranges:</strong> 
                                         New (0-100K) | Active (100K-500K) | High-Usage (500K+)
                                     </small>
                                 </div>
@@ -87,7 +87,7 @@
                             <!-- Submit Button -->
                             <div class="text-center mb-4">
                                 <button type="submit" class="btn btn-primary btn-lg px-5">
-                                    <i class="fas fa-magic"></i> Analyze Fleet Vehicle
+                                    <i class="fas fa-magic"></i> Analyze Vehicle
                                 </button>
                             </div>
 
@@ -98,8 +98,8 @@
                                     <p><strong>Suggestions:</strong></p>
                                     <ul>
                                         <li>Double-check the vehicle number spelling</li>
-                                        <li>Ensure the vehicle is registered in the fleet management system</li>
-                                        <li>Contact fleet manager if vehicle should be in the system</li>
+                                        <li>Ensure the vehicle is registered in the vehicle management system</li>
+                                        <li>Contact the manager if vehicle should be in the system</li>
                                     </ul>
                                 </div>
                             @endif
@@ -114,10 +114,10 @@
                     </div>
                 </form>
 
-                <!-- Sample Fleet Vehicles -->
+                <!-- Sample Vehicles -->
                 <div class="card mt-4">
                     <div class="card-header">
-                        <h6><i class="fas fa-list"></i> Fleet Test Vehicles</h6>
+                        <h6><i class="fas fa-list"></i>Test Vehicles</h6>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -159,7 +159,7 @@ function fillSample(vehicle, mileage) {
 
 // Add real-time validation feedback
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Fleet prediction form loaded successfully');
+    console.log('Vehicle prediction form loaded successfully');
     
     const mileageInput = document.getElementById('current_mileage');
     if (mileageInput) {

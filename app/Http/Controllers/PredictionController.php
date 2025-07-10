@@ -160,7 +160,7 @@ class PredictionController extends Controller
                 return [
                     'valid' => false,
                     'reason' => 'too_low',
-                    'message' => 'Mileage must be at least 1,000 KM for fleet vehicles.',
+                    'message' => 'Mileage must be at least 1,000 KM for vehicles.',
                     'layer_failed' => 'basic_range'
                 ];
             }
@@ -176,17 +176,17 @@ class PredictionController extends Controller
             $validationLayers[] = 'basic_range_passed';
             
             // Layer 2: Statistical outlier detection using DB data
-            $fleetStats = $this->getFleetStatistics();
-            if ($fleetStats) {
-                $zScore = abs(($currentMileage - $fleetStats['avg_mileage']) / ($fleetStats['std_dev'] ?: 500000));
-                
+            $vehicleStats = $this->getVehicleStatistics();
+            if ($vehicleStats) {
+                $zScore = abs(($currentMileage - $vehicleStats['avg_mileage']) / ($vehicleStats['std_dev'] ?: 500000));
+
                 if ($zScore > 6) { // Extreme statistical outlier
                     return [
                         'valid' => false,
                         'reason' => 'statistical_outlier',
-                        'message' => "Mileage is an extreme statistical outlier. Fleet average: " . number_format($fleetStats['avg_mileage']) . " KM. Please verify your reading.",
+                        'message' => "Mileage is an extreme statistical outlier. Vehicle average: " . number_format($vehicleStats['avg_mileage']) . " KM. Please verify your reading.",
                         'z_score' => round($zScore, 2),
-                        'fleet_context' => $fleetStats,
+                        'vehicle_context' => $vehicleStats,
                         'layer_failed' => 'statistical_analysis'
                     ];
                 }
@@ -239,11 +239,11 @@ class PredictionController extends Controller
     }
 
     /**
-     * Get fleet-wide statistics for validation (using existing DB)
+     * Get vehicle-wide statistics for validation (using existing DB)
      */
-    private function getFleetStatistics()
+    private function getVehicleStatistics()
     {
-        return Cache::remember('fleet_statistics', 1800, function () { // Cache for 30 minutes
+        return Cache::remember('vehicle_statistics', 1800, function () { // Cache for 30 minutes
             try {
                 $stats = DB::selectOne("
                     SELECT 
@@ -277,7 +277,7 @@ class PredictionController extends Controller
                 ];
                 
             } catch (\Exception $e) {
-                Log::warning('Fleet statistics calculation failed: ' . $e->getMessage());
+                Log::warning('Vehicle statistics calculation failed: ' . $e->getMessage());
                 return null;
             }
         });
@@ -305,24 +305,33 @@ class PredictionController extends Controller
             $latestMileage = $progression[0]->mileage;
             $difference = $currentMileage - $latestMileage;
             
-            // Check for backward progression (more than 50K decrease)
-            if ($difference < -50000) {
+            Log::info("Validation Debug", [
+                'vehicle' => $vehicleNumber,
+                'latest_mileage' => $latestMileage,
+                'current_input' => $currentMileage,
+                'difference' => $difference
+            ]);
+            
+            // FIXED: Check for ANY backward progression (more strict)
+            if ($difference < 0) {  // Changed from -50000 to -1000
                 return [
                     'valid' => false,
                     'reason' => 'backward_progression',
-                    'message' => "Mileage appears to go backward from latest recorded (" . number_format($latestMileage) . " KM). Difference: " . number_format($difference) . " KM.",
+                    'message' => "Mileage appears to go backward from latest recorded (" . number_format($latestMileage) . " KM). You entered: " . number_format($currentMileage) . " KM (difference: " . number_format($difference) . " KM).",
                     'latest_recorded' => round($latestMileage),
+                    'user_input' => round($currentMileage),
                     'difference' => round($difference)
                 ];
             }
             
-            // Check for unrealistic forward jump (more than 200K increase)
-            if ($difference > 200000) {
+            // ENHANCED: More reasonable forward jump detection
+            if ($difference > 100000) {  // Changed from 200000 to 100000
                 return [
                     'valid' => false,
                     'reason' => 'unrealistic_jump',
-                    'message' => "Mileage increase too large from latest recorded (" . number_format($latestMileage) . " KM). Increase: " . number_format($difference) . " KM.",
+                    'message' => "Mileage increase too large from latest recorded (" . number_format($latestMileage) . " KM). You entered: " . number_format($currentMileage) . " KM (increase: " . number_format($difference) . " KM). Please verify your odometer reading.",
                     'latest_recorded' => round($latestMileage),
+                    'user_input' => round($currentMileage),
                     'difference' => round($difference)
                 ];
             }
@@ -330,7 +339,7 @@ class PredictionController extends Controller
             return ['valid' => true, 'progression_check' => 'normal'];
             
         } catch (\Exception $e) {
-            Log::warning('Progression validation failed: ' . $e->getMessage());
+            Log::error('Progression validation error: ' . $e->getMessage());
             return ['valid' => true, 'reason' => 'progression_check_failed'];
         }
     }
@@ -340,11 +349,11 @@ class PredictionController extends Controller
      */
     private function detectKnownAnomalies($vehicleNumber, $mileage)
     {
-        // Known problematic patterns from fleet analysis
+        // Known problematic patterns from vehicle analysis
         $problematicPatterns = [
             'extreme_mileage' => $mileage > 5000000,
             'suspicious_round_numbers' => in_array($mileage, [0, 1, 10, 100, 1000, 10000, 100000, 1000000]),
-            'known_error_ranges' => ($mileage >= 10000000 && $mileage <= 20000000), // From fleet analysis
+            'known_error_ranges' => ($mileage >= 10000000 && $mileage <= 20000000), // From vehicle analysis
             'impossible_low' => $mileage < 500
         ];
         
@@ -380,7 +389,7 @@ class PredictionController extends Controller
                 'safety_systems' => []
             ];
             
-            // Analyze critical safety systems based on fleet incident patterns
+            // Analyze critical safety systems based on vehicle incident patterns
             $safetyAnalysis['safety_systems']['brake_system'] = $this->analyzeBrakeSystemSafety($records, $currentMileage);
             $safetyAnalysis['safety_systems']['tire_safety'] = $this->analyzeTireSystemSafety($records, $currentMileage);
             $safetyAnalysis['safety_systems']['air_system'] = $this->analyzeAirSystemSafety($records);
@@ -402,11 +411,11 @@ class PredictionController extends Controller
     }
 
     /**
-     * Analyze brake system safety (Priority #1 based on fleet data)
+     * Analyze brake system safety (Priority #1 based on vehicle data)
      */
     private function analyzeBrakeSystemSafety($records, $currentMileage)
     {
-        // Critical brake keywords from fleet incident analysis (371+ brake incidents)
+        // Critical brake keywords from vehicle incident analysis (371+ brake incidents)
         $brakeKeywords = [
             'critical' => ['brake jammed', 'brek jammed', 'brake fail', 'pedal kosong', 'no brake'],
             'urgent' => ['brake issue', 'brake berbunyi', 'angin bocor', 'lining brake', 'pad brek'],
@@ -1343,9 +1352,9 @@ class PredictionController extends Controller
                 
                 // Adjust time for immediate repairs (may need same day service)
                 if ($costAnalysis['total_time_estimate']['max_minutes'] ?? 120 > 240) {
-                    $recommendations['time_estimate'] = 'Same day (4+ hours)';
+                    $recommendations['time_estimate'] = '4+ hours';
                 } elseif ($costAnalysis['total_time_estimate']['max_minutes'] ?? 120 > 120) {
-                    $recommendations['time_estimate'] = 'Same day (2-4 hours)';
+                    $recommendations['time_estimate'] = '2-4 hours';
                 } else {
                     $recommendations['time_estimate'] = $timeEstimate;
                 }
@@ -1628,15 +1637,15 @@ private function determineVehicleType($records, $averageInterval)
     $totalServices = $records->count();
     
     if ($totalServices > 500 && $averageInterval < 1000) {
-        return 'Ultra High Usage Fleet';
+        return 'Ultra High Usage Vehicle';
     } elseif ($totalServices > 300 && $averageInterval < 2000) {
-        return 'High Usage Commercial';
+        return 'High Usage Vehicle';
     } elseif ($totalServices > 100 && $averageInterval < 5000) {
-        return 'Regular Commercial';
+        return 'Regular Vehicle';
     } elseif ($totalServices > 50) {
-        return 'Light Commercial';
+        return 'Light Vehicle';
     } else {
-        return 'Low Usage Fleet';
+        return 'Low Usage Vehicle';
     }
 }
 
@@ -1872,10 +1881,10 @@ private function safePartsAnalysis($currentMileage, $vehicleHistory, $mlPredicti
             ];
             
             // REAL MALAYSIAN COMMERCIAL VEHICLE MARKET DATA
-            // Based on analysis of actual fleet maintenance records and industry standards
-            // Intervals researched from Malaysian commercial vehicle workshops and fleet operators
+            // Based on analysis of actual vehicle maintenance records and industry standards
+            // Intervals researched from Malaysian commercial vehicle workshops and vehicle operators
             // Costs reflect 2024-2025 Malaysian market rates for commercial vehicles
-            $fleetParts = [
+            $vehicleParts = [
                 // PRIORITY 1 - Critical Safety Parts
                 'Engine Oil & Hydraulics' => [
                     'priority' => 1,
@@ -1952,10 +1961,10 @@ private function safePartsAnalysis($currentMileage, $vehicleHistory, $mlPredicti
                     'industry_note' => 'General inspection and minor adjustments'
                 ]
             ];
-            
-            // Analyze each part category using real fleet data
-            foreach ($fleetParts as $partName => $partData) {
-                $lastService = $this->findLastServiceForFleetPart($records, $partData['keywords']);
+
+            // Analyze each part category using real vehicle data
+            foreach ($vehicleParts as $partName => $partData) {
+                $lastService = $this->findLastServiceForVehiclePart($records, $partData['keywords']);
                 $lastServiceKm = $lastService ? $this->extractMileage($lastService) : ($currentMileage - $partData['interval_km'] - 1000);
                 
                 $kmSinceService = $currentMileage - $lastServiceKm;
@@ -1963,8 +1972,8 @@ private function safePartsAnalysis($currentMileage, $vehicleHistory, $mlPredicti
                 
                 // Calculate days remaining based on daily usage
                 $daysRemaining = $dailyUsageKm > 0 ? max(0, intval(round($kmRemaining / $dailyUsageKm))) : 0;
-                
-                // Determine urgency based on real fleet patterns
+
+                // Determine urgency based on real vehicle patterns
                 $urgencyThreshold = $this->getUrgencyThreshold($partData['priority'], $partData['interval_km']);
                 
                 $partAnalysis = [
@@ -2003,7 +2012,7 @@ private function safePartsAnalysis($currentMileage, $vehicleHistory, $mlPredicti
                     'days_remaining' => $daysRemaining,
                     'next_due_km' => number_format($lastServiceKm + $partData['interval_km']),
                     'next_due_date' => 'At ' . number_format($lastServiceKm + $partData['interval_km']) . ' KM',
-                    'reason' => $this->getFleetBasedReason($partName, $kmSinceService, $partData['interval_km']),
+                    'reason' => $this->getVehicleBasedReason($partName, $kmSinceService, $partData['interval_km']),
                     'status' => $kmRemaining <= 0 ? 'overdue' : 'scheduled',
                     'is_critical' => $partData['is_critical'],
                     'service_count' => $this->countServicesByKeywords($records, $partData['keywords']),
@@ -2011,7 +2020,7 @@ private function safePartsAnalysis($currentMileage, $vehicleHistory, $mlPredicti
                     'industry_note' => $partData['industry_note']
                 ];
                 
-                // Categorize based on real fleet priority and condition
+                // Categorize based on real vehicle priority and condition
                 if ($partData['priority'] == 1 && ($kmRemaining <= 0 || $kmRemaining <= $urgencyThreshold['immediate'])) {
                     $analysis['immediate'][] = $partAnalysis;
                 } elseif ($kmRemaining <= $urgencyThreshold['soon']) {
@@ -2036,8 +2045,8 @@ private function safePartsAnalysis($currentMileage, $vehicleHistory, $mlPredicti
             return $analysis;
             
         } catch (\Exception $e) {
-            Log::error("Fleet parts analysis error: " . $e->getMessage());
-            
+            Log::error("Vehicle parts analysis error: " . $e->getMessage());
+
             // Return safe fallback with real cost structure
             return [
                 'immediate' => [],
@@ -2066,9 +2075,9 @@ private function safePartsAnalysis($currentMileage, $vehicleHistory, $mlPredicti
     }
 
     /**
-     * Find last service for fleet part using real keywords
+     * Find last service for vehicle part using real keywords
      */
-    private function findLastServiceForFleetPart($records, $keywords)
+    private function findLastServiceForVehiclePart($records, $keywords)
     {
         foreach ($records as $record) {
             $description = strtolower($record->Description ?? '');
@@ -2081,7 +2090,7 @@ private function safePartsAnalysis($currentMileage, $vehicleHistory, $mlPredicti
                     $enhanced = $this->enhanceServiceRecord($record);
                     
                     // DEBUG: Log the enhanced record structure
-                    Log::info("DEBUG: findLastServiceForFleetPart enhanced record", [
+                    Log::info("DEBUG: findLastServiceForVehiclePart enhanced record", [
                         'record_id' => $record->ID,
                         'building_original' => $record->Building,
                         'depot_info_in_enhanced' => $enhanced->depot_info ?? 'NOT_SET',
@@ -2309,7 +2318,7 @@ private function countServicesByKeywords($records, $keywords)
 }
 
 /**
- * Get urgency thresholds based on fleet priority
+ * Get urgency thresholds based on vehicle priority
  */
 private function getUrgencyThreshold($priority, $intervalKm)
 {
@@ -2335,9 +2344,9 @@ private function getUrgencyThreshold($priority, $intervalKm)
 }
 
 /**
- * Get fleet-based maintenance reason
+ * Get vehicle-based maintenance reason
  */
-private function getFleetBasedReason($partName, $kmSinceService, $intervalKm)
+private function getVehicleBasedReason($partName, $kmSinceService, $intervalKm)
 {
     $percentageUsed = $intervalKm > 0 ? ($kmSinceService / $intervalKm) * 100 : 0;
     
@@ -2518,7 +2527,7 @@ private function preparePredictionData($vehicleNumber, $currentMileage, $vehicle
         'service_count' => $vehicleHistory['total_services'],
         'average_interval' => $vehicleHistory['average_interval'],
         'days_since_last' => $vehicleHistory['days_since_last'],
-        'Description' => 'Fleet prediction request',
+        'Description' => 'Vehicle prediction request',
         'Priority' => 2,
         'Status' => 1,
         'MrType' => 3

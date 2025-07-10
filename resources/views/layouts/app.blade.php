@@ -72,7 +72,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" href="{{ route('prediction.index') }}">
-                <i class="fas fa-truck"></i> VMS Fleet Prediction Service
+                <i class="fas fa-truck"></i> VMS Vehicle Prediction Service
             </a>
         </div>
     </nav>
