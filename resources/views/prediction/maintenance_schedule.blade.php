@@ -18,7 +18,7 @@
                         @endif
                     </div>
                     <div class="col-md-6 text-md-end">
-                        <h5>Fleet Maintenance Analysis</h5>
+                        <h5>Vehicle Maintenance Analysis</h5>
                         <small>Generated: {{ now()->format('d M Y, g:i A') }}</small>
                         @if(isset($mlPrediction['source']))
                         <br><small class="badge bg-info">{{ $mlPrediction['source'] }}</small>
@@ -139,7 +139,7 @@
                         
                         <h3 class="text-warning">{{ $timeEstimate }}</h3>
                         
-                        <p class="text-muted">Fleet maintenance time required</p>
+                        <p class="text-muted">Maintenance time required</p>
                         
                         @if(isset($recommendations['safety_priority']) && $recommendations['safety_priority'])
                         <span class="badge bg-danger">Safety Priority</span>
@@ -399,7 +399,7 @@
         <div class="card mb-4">
             <div class="card-header bg-info text-white">
                 <h5 class="mb-0"><i class="fas fa-list-check me-2"></i>📊 Routine Parts Status ({{ count($partsAnalysis['routine']) }})</h5>
-                <small>Components in good condition based on fleet maintenance intervals</small>
+                <small>Components in good condition based on vehicle maintenance intervals</small>
             </div>
             <div class="card-body">
                 @php
@@ -483,7 +483,7 @@
 
                                     @if(isset($part['service_count']) && $part['service_count'] > 0)
                                     <div class="mt-1">
-                                        <small class="text-info">Fleet history: {{ $part['service_count'] }} services</small>
+                                        <small class="text-info">Vehicle history: {{ $part['service_count'] }} services</small>
                                     </div>
                                     @endif
                                 </div>
@@ -557,7 +557,7 @@
 
                                     @if(isset($part['service_count']) && $part['service_count'] > 0)
                                     <div class="mt-1">
-                                        <small class="text-secondary">{{ $part['service_count'] }} fleet services</small>
+                                        <small class="text-secondary">{{ $part['service_count'] }} vehicle services</small>
                                     </div>
                                     @endif
                                 </div>
@@ -642,7 +642,7 @@
                 <div class="row">
                     <div class="col-md-8">
                         @php
-                            $actionPlan = $recommendations['action_plan'] ?? ['📅 Schedule regular fleet maintenance'];
+                            $actionPlan = $recommendations['action_plan'] ?? ['📅 Schedule regular vehicle maintenance'];
                             $priority = $recommendations['priority'] ?? 'routine';
                         @endphp
                         
@@ -651,17 +651,17 @@
                                 @foreach($actionPlan as $action)
                                 <li class="list-group-item">{!! $action !!}</li>
                                 @endforeach
-                                <li class="list-group-item">📞 Contact fleet manager to schedule maintenance</li>
+                                <li class="list-group-item">📞 Contact the manager to schedule maintenance</li>
                                 <li class="list-group-item">🔧 Follow recommended maintenance procedures</li>
                                 <li class="list-group-item">📅 Schedule next check at {{ number_format($serviceSchedule['next_routine']['mileage'] ?? 0) }} KM</li>
                             </ol>
                         @else
-                            <p class="text-muted">No specific action plan available. Continue with regular fleet operations.</p>
+                            <p class="text-muted">No specific action plan available. Continue with regular vehicle operations.</p>
                         @endif
                     </div>
                     <div class="col-md-4">
                         <div class="alert alert-light">
-                            <h6><i class="fas fa-info-circle"></i> Fleet Analytics</h6>
+                            <h6><i class="fas fa-info-circle"></i> Vehicle Analytics</h6>
                             <p class="mb-1"><strong>Total Services:</strong> {{ $vehicleHistory['total_services'] ?? 0 }}</p>
                             @if(isset($vehicleHistory['last_service']) && $vehicleHistory['last_service'])
                             <p class="mb-1"><strong>Last Service:</strong> {{ Carbon\Carbon::parse($vehicleHistory['last_service']->Datereceived)->format('d M Y') }}</p>
@@ -678,13 +678,13 @@
         <!-- Quick Action Buttons - MOVED UP -->
         <div class="text-center mb-4">
             <button class="btn btn-success btn-lg me-3" onclick="scheduleService()">
-                <i class="fas fa-wrench"></i> Schedule Fleet Maintenance
+                <i class="fas fa-wrench"></i> Schedule Vehicle Maintenance
             </button>
             <a href="{{ route('prediction.index') }}" class="btn btn-primary btn-lg me-3">
                 <i class="fas fa-plus"></i> Analyze Another Vehicle
             </a>
             <button onclick="window.print()" class="btn btn-secondary btn-lg me-3">
-                <i class="fas fa-print"></i> Print Fleet Report
+                <i class="fas fa-print"></i> Print Vehicle Report
             </button>
         </div>
 
@@ -941,10 +941,11 @@ function toggleFullHistory() {
 
 .cost-highlight {
     background: linear-gradient(45deg, #28a745, #1e7e34);
-    color: white;
+    color: white !important;
     padding: 2px 6px;
     border-radius: 4px;
     font-weight: bold;
+    display: inline-block;
 }
 
 /* Responsive improvements for service details */
