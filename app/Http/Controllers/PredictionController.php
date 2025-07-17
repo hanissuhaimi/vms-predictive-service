@@ -1450,8 +1450,16 @@ private function getVehicleHistory($vehicleNumber)
         
         // Get all service records for this vehicle
         $records = ServiceRequest::whereRaw('UPPER(TRIM(Vehicle)) = ?', [strtoupper(trim($vehicleNumber))])
-            ->whereNotNull('Datereceived')
-            ->orderBy('Datereceived', 'desc')
+            ->where(function($query) {
+                $query->whereNotNull('Datereceived')
+                      ->orWhereNotNull('DateModify')  // Alternative date field
+                      ->orWhereNotNull('responseDate') // Another alternative
+                      ->orWhere('ID', '>', 0);        // Include all records if no dates
+            })
+            ->orderBy(function($query) {
+                // Smart ordering: use best available date
+                return $query->selectRaw('COALESCE(Datereceived, DateModify, responseDate, getdate())');
+            }, 'desc')
             ->get();
         
         if ($records->isEmpty()) {
@@ -1479,7 +1487,22 @@ private function getVehicleHistory($vehicleNumber)
         
         // Get days since last service
         $lastService = $records->first();
-        $daysSinceLast = $lastService ? intval(Carbon::parse($lastService->Datereceived)->diffInDays(now())) : 365;
+        $daysSinceLast = 365;
+
+        if ($lastService) {
+            $lastServiceDate = $lastService->Datereceived 
+                ?? $lastService->DateModify 
+                ?? $lastService->responseDate;
+                
+            if ($lastServiceDate) {
+                try {
+                    $daysSinceLast = intval(Carbon::parse($lastServiceDate)->diffInDays(now()));
+                } catch (\Exception $e) {
+                    Log::warning("Date parsing failed for {$vehicleNumber}: " . $e->getMessage());
+                    $daysSinceLast = 365;
+                }
+            }
+        }
         
         // Determine vehicle type based on usage patterns
         $vehicleType = $this->determineVehicleType($records, $averageInterval);

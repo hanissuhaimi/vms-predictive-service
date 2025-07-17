@@ -3112,3 +3112,117 @@ Route::get('/test-validation-fix/{vehicle}/{mileage}', function($vehicle, $milea
     
     echo "<p><a href='/'>← Back to Main App</a></p>";
 });
+
+Route::get('/debug-vehicle-wb9834e', function() {
+    echo "<h1>🔍 WB9834E Vehicle Debug</h1>";
+    
+    try {
+        // Test 1: Exact search
+        echo "<h3>1. Exact Vehicle Search</h3>";
+        $exact = DB::table('ServiceRequest')
+            ->where('Vehicle', 'WB9834E')
+            ->count();
+        echo "Exact 'WB9834E': {$exact} records<br>";
+        
+        // Test 2: Case variations
+        echo "<h3>2. Case Variations</h3>";
+        $variations = [
+            'WB9834E' => DB::table('ServiceRequest')->where('Vehicle', 'WB9834E')->count(),
+            'wb9834e' => DB::table('ServiceRequest')->where('Vehicle', 'wb9834e')->count(), 
+            'WB9834e' => DB::table('ServiceRequest')->where('Vehicle', 'WB9834e')->count(),
+            'Wb9834E' => DB::table('ServiceRequest')->where('Vehicle', 'Wb9834E')->count(),
+        ];
+        
+        foreach ($variations as $variant => $count) {
+            echo "'{$variant}': {$count} records<br>";
+        }
+        
+        // Test 3: LIKE search for similar patterns
+        echo "<h3>3. Pattern Matching</h3>";
+        $likeSearches = [
+            'WB9834%' => DB::table('ServiceRequest')->where('Vehicle', 'LIKE', 'WB9834%')->get(['Vehicle'])->pluck('Vehicle')->unique(),
+            '%9834E' => DB::table('ServiceRequest')->where('Vehicle', 'LIKE', '%9834E')->get(['Vehicle'])->pluck('Vehicle')->unique(),
+            'WB%834E' => DB::table('ServiceRequest')->where('Vehicle', 'LIKE', 'WB%834E')->get(['Vehicle'])->pluck('Vehicle')->unique(),
+        ];
+        
+        foreach ($likeSearches as $pattern => $vehicles) {
+            echo "<strong>Pattern '{$pattern}':</strong><br>";
+            if ($vehicles->count() > 0) {
+                foreach ($vehicles as $vehicle) {
+                    echo "  Found: '{$vehicle}'<br>";
+                }
+            } else {
+                echo "  No matches<br>";
+            }
+        }
+        
+        // Test 4: Check for special characters/encoding
+        echo "<h3>4. Character Analysis</h3>";
+        $wb9834Vehicles = DB::table('ServiceRequest')
+            ->where('Vehicle', 'LIKE', 'WB9834%')
+            ->select('Vehicle')
+            ->distinct()
+            ->get();
+            
+        foreach ($wb9834Vehicles as $vehicle) {
+            $vehicleStr = $vehicle->Vehicle;
+            echo "Vehicle: '{$vehicleStr}' | Length: " . strlen($vehicleStr) . " | Bytes: ";
+            for ($i = 0; $i < strlen($vehicleStr); $i++) {
+                echo ord($vehicleStr[$i]) . " ";
+            }
+            echo "<br>";
+        }
+        
+        // Test 5: Check actual vehicle numbers that start with WB
+        echo "<h3>5. All WB Vehicles (sample)</h3>";
+        $wbVehicles = DB::table('ServiceRequest')
+            ->where('Vehicle', 'LIKE', 'WB%')
+            ->select('Vehicle')
+            ->distinct()
+            ->orderBy('Vehicle')
+            ->take(20)
+            ->pluck('Vehicle');
+            
+        foreach ($wbVehicles as $vehicle) {
+            echo "'{$vehicle}'<br>";
+        }
+        
+        // Test 6: Raw SQL search with different approaches
+        echo "<h3>6. Raw SQL Tests</h3>";
+        
+        $rawTests = [
+            "UPPER(Vehicle) = 'WB9834E'" => DB::select("SELECT COUNT(*) as count FROM ServiceRequest WHERE UPPER(Vehicle) = 'WB9834E'")[0]->count,
+            "LTRIM(RTRIM(Vehicle)) = 'WB9834E'" => DB::select("SELECT COUNT(*) as count FROM ServiceRequest WHERE LTRIM(RTRIM(Vehicle)) = 'WB9834E'")[0]->count,
+            "UPPER(LTRIM(RTRIM(Vehicle))) = 'WB9834E'" => DB::select("SELECT COUNT(*) as count FROM ServiceRequest WHERE UPPER(LTRIM(RTRIM(Vehicle))) = 'WB9834E'")[0]->count,
+        ];
+        
+        foreach ($rawTests as $test => $count) {
+            echo "<strong>{$test}:</strong> {$count} records<br>";
+        }
+        
+        // Test 7: Check if there are records but with different characters
+        echo "<h3>7. Character-by-Character Analysis</h3>";
+        $suspiciousVehicles = DB::select("
+            SELECT DISTINCT Vehicle, LEN(Vehicle) as length
+            FROM ServiceRequest 
+            WHERE Vehicle LIKE 'WB9834%'
+            ORDER BY Vehicle
+        ");
+        
+        foreach ($suspiciousVehicles as $vehicle) {
+            echo "Vehicle: '{$vehicle->Vehicle}' | Length: {$vehicle->length}<br>";
+            
+            // Show ASCII values
+            $vehicleStr = $vehicle->Vehicle;
+            echo "ASCII: ";
+            for ($i = 0; $i < strlen($vehicleStr); $i++) {
+                echo ord($vehicleStr[$i]) . "(" . $vehicleStr[$i] . ") ";
+            }
+            echo "<br><br>";
+        }
+        
+    } catch (\Exception $e) {
+        echo "<h3>❌ Error</h3>";
+        echo "<p>Error: " . $e->getMessage() . "</p>";
+    }
+});

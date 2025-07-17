@@ -44,7 +44,7 @@
                                        id="vehicle_number" 
                                        name="vehicle_number" 
                                        value="{{ old('vehicle_number') }}" 
-                                       placeholder="e.g., VEK4613"
+                                       placeholder=""
                                        required>
                                 <div class="form-text">Enter the vehicle's registration number</div>
                             </div>
@@ -61,7 +61,7 @@
                                     value="{{ old('current_mileage') }}" 
                                     min="1" 
                                     max="2000000"
-                                    placeholder="e.g., 625000"
+                                    placeholder="cd .."
                                     required>
                                 
                                 @error('current_mileage')
@@ -75,13 +75,13 @@
                                 </div>
                                 
                                 <!-- Helpful mileage guide -->
-                                <div class="mt-2">
+                                {{-- <div class="mt-2">
                                     <small class="text-muted">
                                         <i class="fas fa-info-circle"></i> 
                                         <strong>Vehicle Ranges:</strong> 
                                         New (0-100K) | Active (100K-500K) | High-Usage (500K+)
                                     </small>
-                                </div>
+                                </div> --}}
                             </div>
 
                             <!-- Submit Button -->
@@ -115,7 +115,7 @@
                 </form>
 
                 <!-- Sample Vehicles -->
-                <div class="card mt-4">
+                {{-- <div class="card mt-4">
                     <div class="card-header">
                         <h6><i class="fas fa-list"></i>Test Vehicles</h6>
                     </div>
@@ -144,7 +144,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>
