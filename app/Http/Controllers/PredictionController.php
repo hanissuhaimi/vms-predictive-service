@@ -1539,6 +1539,333 @@ private function getVehicleHistory($vehicleNumber)
 }
 
 /**
+ * Display comprehensive maintenance history for a vehicle
+ */
+public function maintenanceHistory($vehicleNumber, $currentMileage = null)
+{
+    try {
+        Log::info("Getting maintenance history for: {$vehicleNumber}" . ($currentMileage ? " at {$currentMileage} KM" : ""));
+        
+        $vehicleNumber = strtoupper(trim($vehicleNumber));
+        
+        // Get comprehensive vehicle history
+        $vehicleHistory = $this->getVehicleHistory($vehicleNumber);
+        
+        if ($vehicleHistory['total_services'] === 0) {
+            return redirect()->route('prediction.index')
+                ->with('error', "No maintenance records found for vehicle {$vehicleNumber}");
+        }
+        
+        // If no mileage provided, try to get the latest from records
+        if (!$currentMileage) {
+            $latestRecord = $vehicleHistory['records']->first();
+            if ($latestRecord && $latestRecord->Odometer && is_numeric($latestRecord->Odometer)) {
+                $currentMileage = intval(floatval($latestRecord->Odometer));
+            } else {
+                $currentMileage = 0; // Default if no mileage available
+            }
+        } else {
+            $currentMileage = intval($currentMileage);
+        }
+        
+        // Get all records with detailed information (same as before)
+        $allRecords = ServiceRequest::whereRaw('UPPER(TRIM(Vehicle)) = ?', [strtoupper(trim($vehicleNumber))])
+            ->where(function($query) {
+                $query->whereNotNull('Datereceived')
+                      ->orWhereNotNull('DateModify')
+                      ->orWhereNotNull('responseDate')
+                      ->orWhere('ID', '>', 0);
+            })
+            ->orderBy(function($query) {
+                return $query->selectRaw('COALESCE(Datereceived, DateModify, responseDate, getdate())');
+            }, 'desc')
+            ->get();
+        
+        // Process records with enhanced details
+        $processedRecords = $allRecords->map(function ($record) {
+            return $this->enhanceServiceRecord($record);
+        });
+        
+        // Group records by year and month
+        $groupedHistory = $this->groupRecordsByPeriod($processedRecords);
+        
+        // Get service statistics
+        $serviceStats = $this->calculateServiceStatistics($allRecords);
+        
+        // Get parts analysis for trends
+        $partsAnalysis = $this->analyzePartsUsageTrends($allRecords);
+        
+        // Get cost analysis over time
+        $costAnalysis = $this->analyzeCostTrends($allRecords);
+        
+        return view('maintenance.history', [
+            'vehicle' => $vehicleNumber,
+            'currentMileage' => $currentMileage, // ADDED: Pass mileage to view
+            'vehicleHistory' => $vehicleHistory,
+            'allRecords' => $processedRecords,
+            'groupedHistory' => $groupedHistory,
+            'serviceStats' => $serviceStats,
+            'partsAnalysis' => $partsAnalysis,
+            'costAnalysis' => $costAnalysis,
+            'totalRecords' => $allRecords->count()
+        ]);
+        
+    } catch (\Exception $e) {
+        Log::error("Maintenance history error: {$e->getMessage()}");
+        
+        return redirect()->route('prediction.index')
+            ->with('error', 'Unable to load maintenance history. Please try again.');
+    }
+}
+
+/**
+ * Group records by time periods for better organization
+ */
+private function groupRecordsByPeriod($records)
+{
+    return $records->groupBy(function ($record) {
+        try {
+            if ($record->Datereceived) {
+                $date = Carbon::parse($record->Datereceived);
+                return $date->format('Y-m'); // Group by Year-Month
+            }
+            return 'unknown';
+        } catch (\Exception $e) {
+            return 'unknown';
+        }
+    })->sortKeysDesc();
+}
+
+/**
+ * Calculate comprehensive service statistics
+ */
+private function calculateServiceStatistics($records)
+{
+    $stats = [
+        'total_services' => $records->count(),
+        'by_type' => [],
+        'by_priority' => [],
+        'by_status' => [],
+        'by_year' => [],
+        'recent_activity' => []
+    ];
+    
+    // Group by service type
+    $stats['by_type'] = $records->groupBy('MrType')->map(function ($group, $type) {
+        $typeName = $this->getMrTypeText($type);
+        return [
+            'name' => $typeName,
+            'count' => $group->count(),
+            'percentage' => 0 // Will calculate after
+        ];
+    });
+    
+    // Calculate percentages
+    $total = $records->count();
+    if ($total > 0) {
+        $stats['by_type'] = $stats['by_type']->map(function ($item) use ($total) {
+            $item['percentage'] = round(($item['count'] / $total) * 100, 1);
+            return $item;
+        });
+    }
+    
+    // Group by priority
+    $stats['by_priority'] = $records->groupBy('Priority')->map(function ($group, $priority) {
+        return [
+            'name' => $this->getPriorityText($priority),
+            'count' => $group->count()
+        ];
+    });
+    
+    // Group by status
+    $stats['by_status'] = $records->groupBy('Status')->map(function ($group, $status) {
+        return [
+            'name' => $this->getStatusText($status),
+            'count' => $group->count()
+        ];
+    });
+    
+    // Group by year
+    $stats['by_year'] = $records->groupBy(function ($record) {
+        try {
+            if ($record->Datereceived) {
+                return Carbon::parse($record->Datereceived)->format('Y');
+            }
+            return 'Unknown';
+        } catch (\Exception $e) {
+            return 'Unknown';
+        }
+    })->map(function ($group) {
+        return $group->count();
+    })->sortKeysDesc();
+    
+    return $stats;
+}
+
+/**
+ * Analyze parts usage trends over time
+ */
+private function analyzePartsUsageTrends($records)
+{
+    $partKeywords = [
+        'Oil Services' => ['minyak', 'oil', 'oil change', 'oil filter'],
+        'Brake Services' => ['brake', 'brek', 'lining', 'pad'],
+        'Tire Services' => ['tayar', 'tire', 'tyre'],
+        'Electrical' => ['lampu', 'wiring', 'electrical', 'battery'],
+        'Engine Services' => ['enjin', 'engine', 'motor'],
+        'Air System' => ['angin', 'air', 'belon']
+    ];
+    
+    $trends = [];
+    
+    foreach ($partKeywords as $partName => $keywords) {
+        $count = 0;
+        foreach ($records as $record) {
+            $searchText = strtolower(($record->Description ?? '') . ' ' . ($record->Response ?? ''));
+            foreach ($keywords as $keyword) {
+                if (str_contains($searchText, $keyword)) {
+                    $count++;
+                    break;
+                }
+            }
+        }
+        
+        $trends[$partName] = [
+            'count' => $count,
+            'percentage' => $records->count() > 0 ? round(($count / $records->count()) * 100, 1) : 0
+        ];
+    }
+    
+    // Sort by count
+    uasort($trends, function($a, $b) {
+        return $b['count'] - $a['count'];
+    });
+    
+    return $trends;
+}
+
+/**
+ * Analyze cost trends (if cost data available)
+ */
+private function analyzeCostTrends($records)
+{
+    // Since cost data might not be directly available in records,
+    // we'll analyze service frequency as a proxy for cost trends
+    $yearlyTrends = $records->groupBy(function ($record) {
+        try {
+            if ($record->Datereceived) {
+                return Carbon::parse($record->Datereceived)->format('Y');
+            }
+            return 'Unknown';
+        } catch (\Exception $e) {
+            return 'Unknown';
+        }
+    })->map(function ($group, $year) {
+        return [
+            'year' => $year,
+            'services' => $group->count(),
+            'estimated_cost' => $group->count() * 250 // Rough estimate
+        ];
+    })->sortKeys();
+    
+    return $yearlyTrends;
+}
+
+/**
+ * Export maintenance history (optional feature)
+ */
+public function exportHistory($vehicleNumber)
+{
+    // This could export to Excel/PDF
+    // Implementation depends on your requirements
+    return response()->json(['message' => 'Export feature coming soon']);
+}
+
+/**
+ * Show prediction results directly via GET request (for navigation from history page)
+ */
+public function showPrediction($vehicleNumber, $currentMileage)
+{
+    try {
+        $vehicleNumber = strtoupper(trim($vehicleNumber));
+        $currentMileage = intval($currentMileage);
+
+        Log::info("=== DIRECT PREDICTION VIEW ===");
+        Log::info("Vehicle: {$vehicleNumber}, Mileage: {$currentMileage}");
+
+        // Validate vehicle exists
+        $vehicleHistory = $this->getVehicleHistory($vehicleNumber);
+        
+        if ($vehicleHistory['total_services'] === 0) {
+            return redirect()->route('prediction.index')
+                ->with('error', "Vehicle number '{$vehicleNumber}' not found in our database.");
+        }
+
+        // Use the same enhanced prediction logic as the POST method
+        $startTime = microtime(true);
+
+        // ENHANCEMENT 2: Advanced Multi-Layer Validation
+        $advancedValidation = $this->validateMileageAdvanced($vehicleNumber, $currentMileage);
+        
+        if (!$advancedValidation['valid']) {
+            Log::warning("Advanced validation failed: " . $advancedValidation['reason']);
+            
+            return redirect()->route('prediction.index')
+                ->with('error', $advancedValidation['message'])
+                ->with('validation_details', $advancedValidation);
+        }
+        
+        Log::info("✅ Advanced validation passed with " . count($advancedValidation['layers_passed']) . " layers");
+
+        // ENHANCEMENT 3: Safety-Critical System Analysis
+        $safetyAnalysis = $this->analyzeSafetyCriticalSystems($vehicleNumber, $currentMileage, $vehicleHistory);
+        Log::info("✅ Safety analysis completed - Score: " . $safetyAnalysis['overall_safety_score']);
+
+        // Continue with existing prediction flow (enhanced)
+        $mlPrediction = $this->safeMLPrediction($vehicleNumber, $currentMileage, $vehicleHistory);
+        $serviceSchedule = $this->calculateServiceSchedule($currentMileage, $vehicleHistory);
+        $partsAnalysis = $this->safePartsAnalysis($currentMileage, $vehicleHistory, $mlPrediction);
+        
+        // ENHANCEMENT 7: Predictive Cost Analytics
+        $costAnalysis = $this->predictiveCAostAnalytics($vehicleHistory, $partsAnalysis, $safetyAnalysis, $currentMileage);
+        Log::info("✅ Predictive cost analysis completed");
+
+        $recommendations = $this->enhancedRecommendations($serviceSchedule, $partsAnalysis, $mlPrediction, $safetyAnalysis, $costAnalysis);
+
+        // Enhanced response (same as POST method)
+        $response = [
+            'vehicle' => $vehicleNumber,
+            'currentMileage' => $currentMileage,
+            'vehicleHistory' => $vehicleHistory,
+            'serviceSchedule' => $serviceSchedule,
+            'partsAnalysis' => $partsAnalysis,
+            'recommendations' => $recommendations,
+            'mlPrediction' => $mlPrediction,
+            
+            // NEW ENHANCEMENTS
+            'safetyAnalysis' => $safetyAnalysis,
+            'costAnalysis' => $costAnalysis,
+            'advancedValidation' => $advancedValidation,
+            'systemEnhancement' => [
+                'version' => '2.0',
+                'enhancements_active' => ['advanced_validation', 'safety_critical', 'predictive_cost'],
+                'processing_time' => round((microtime(true) - $startTime) * 1000, 2) . 'ms'
+            ]
+        ];
+
+        Log::info("✅ Direct prediction view completed successfully");
+        return view('prediction.maintenance_schedule', $response);
+
+    } catch (\Exception $e) {
+        Log::error("Direct prediction view error: {$e->getMessage()}");
+        Log::error("Stack trace: " . $e->getTraceAsString());
+        
+        return redirect()->route('prediction.index')
+            ->with('error', 'Analysis failed: ' . $this->getHelpfulErrorMessage($e));
+    }
+}
+
+/**
  * Process service history into standardized format
  */
 private function processServiceHistory($records)

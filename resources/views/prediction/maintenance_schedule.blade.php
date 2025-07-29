@@ -64,12 +64,13 @@
 
         <!-- Service Schedule Prediction -->
         <div class="row mb-4">
-            <div class="col-md-6">
+            <!-- Next Routine Service -->
+            <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
                 <div class="card border-primary">
                     <div class="card-header bg-primary text-white">
-                        <h5><i class="fas fa-calendar-alt"></i> Next Routine Service</h5>
+                        <h5 class="mb-0"><i class="fas fa-calendar-alt"></i> Next Routine Service</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body text-center">
                         <h3 class="text-primary">{{ number_format($serviceSchedule['next_routine']['mileage']) }} KM</h3>
                         <p class="mb-2">
                             <strong>Distance:</strong> {{ number_format($serviceSchedule['next_routine']['km_remaining']) }} KM to go
@@ -77,16 +78,18 @@
                         <p class="mb-2">
                             <strong>Estimated:</strong> {{ $serviceSchedule['days_estimate'] }}
                         </p>
-                        <p class="text-muted">{{ $serviceSchedule['next_routine']['description'] }}</p>
+                        <p class="text-muted small">{{ $serviceSchedule['next_routine']['description'] }}</p>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
+
+            <!-- Next Major Service -->
+            <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
                 <div class="card border-success">
                     <div class="card-header bg-success text-white">
-                        <h5><i class="fas fa-tools"></i> Next Major Service</h5>
+                        <h5 class="mb-0"><i class="fas fa-tools"></i> Next Major Service</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body text-center">
                         <h3 class="text-success">{{ number_format($serviceSchedule['next_major']['mileage']) }} KM</h3>
                         <p class="mb-2">
                             <strong>Distance:</strong> {{ number_format($serviceSchedule['next_major']['km_remaining']) }} KM to go
@@ -94,18 +97,16 @@
                         <p class="mb-2">
                             <strong>Type:</strong> {{ $serviceSchedule['next_major']['type'] }}
                         </p>
-                        <p class="text-muted">{{ $serviceSchedule['next_major']['description'] }}</p>
+                        <p class="text-muted small">{{ $serviceSchedule['next_major']['description'] }}</p>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- 💰 COST & TIME ESTIMATE - MOVED UP -->
-        <div class="row mb-4">
-            <div class="col-md-6">
+            <!-- Estimated Cost -->
+            <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
                 <div class="card border-success">
                     <div class="card-header bg-success text-white">
-                        <h5><i class="fas fa-dollar-sign"></i> 💰 Estimated Cost</h5>
+                        <h5 class="mb-0"><i class="fas fa-dollar-sign"></i> 💰 Estimated Cost</h5>
                     </div>
                     <div class="card-body text-center">
                         @php
@@ -127,10 +128,12 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
+
+            <!-- Estimated Time -->
+            <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
                 <div class="card border-warning">
                     <div class="card-header bg-warning text-dark">
-                        <h5><i class="fas fa-clock"></i> ⏰ Estimated Time</h5>
+                        <h5 class="mb-0"><i class="fas fa-clock"></i> ⏰ Estimated Time</h5>
                     </div>
                     <div class="card-body text-center">
                         @php
@@ -149,6 +152,48 @@
             </div>
         </div>
 
+        <!-- 📋 ACTION PLAN - MOVED AFTER PARTS -->
+        <div class="card mb-4">
+            <div class="card-header bg-secondary text-white">
+                <h5><i class="fas fa-list-ol"></i> 📋 Recommended Action Plan</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        @php
+                            $actionPlan = $recommendations['action_plan'] ?? ['📅 Schedule regular vehicle maintenance'];
+                            $priority = $recommendations['priority'] ?? 'routine';
+                        @endphp
+                        
+                        @if(!empty($actionPlan))
+                            <ol class="list-group list-group-numbered">
+                                @foreach($actionPlan as $action)
+                                <li class="list-group-item">{!! $action !!}</li>
+                                @endforeach
+                                <li class="list-group-item">📞 Contact the manager to schedule maintenance</li>
+                                <li class="list-group-item">🔧 Follow recommended maintenance procedures</li>
+                                <li class="list-group-item">📅 Schedule next check at {{ number_format($serviceSchedule['next_routine']['mileage'] ?? 0) }} KM</li>
+                            </ol>
+                        @else
+                            <p class="text-muted">No specific action plan available. Continue with regular vehicle operations.</p>
+                        @endif
+                    </div>
+                    <div class="col-md-4">
+                        <div class="alert alert-light">
+                            <h6><i class="fas fa-info-circle"></i> Vehicle Analytics</h6>
+                            <p class="mb-1"><strong>Total Services:</strong> {{ $vehicleHistory['total_services'] ?? 0 }}</p>
+                            @if(isset($vehicleHistory['last_service']) && $vehicleHistory['last_service'])
+                            <p class="mb-1"><strong>Last Service:</strong> {{ Carbon\Carbon::parse($vehicleHistory['last_service']->Datereceived)->format('d M Y') }}</p>
+                            <p class="mb-1"><strong>Days Ago:</strong> {{ intval($vehicleHistory['days_since_last'] ?? 0) }} days</p>
+                            @endif
+                            <p class="mb-1"><strong>Avg Interval:</strong> {{ number_format($vehicleHistory['average_interval'] ?? 1000) }} KM</p>
+                            <p class="mb-0"><strong>Vehicle Type:</strong> {{ $vehicleHistory['vehicle_type'] ?? 'Unknown' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- 🔧 PARTS REQUIRING ATTENTION - ENHANCED WITH DETAILED SERVICE INFO -->
         @if(!empty($partsAnalysis['immediate']) || !empty($partsAnalysis['soon']))
         <div class="row mb-4">
@@ -160,7 +205,7 @@
                         <small>Action required now</small>
                     </div>
                     <div class="card-body">
-                        @foreach($partsAnalysis['immediate'] as $part)
+                        @foreach($partsAnalysis['immediate'] as $index => $part)
                         <div class="border-bottom mb-3 pb-3">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <div>
@@ -175,76 +220,91 @@
                                 <span class="badge bg-danger">{{ $part['status'] === 'overdue' ? 'OVERDUE' : 'DUE' }}</span>
                             </div>
                             
-                            <!-- ENHANCED LAST SERVICE DETAILS -->
+                            <!-- COLLAPSIBLE SERVICE DETAILS -->
                             @if(isset($part['last_service_details']) && $part['last_service_details'])
-                            <div class="card service-details-card mb-3">
-                                <div class="card-body p-3">
-                                    <h6 class="card-title text-primary mb-2">
-                                        <i class="fas fa-wrench"></i> Last Service Details
-                                    </h6>
-                                    
-                                    <div class="row text-sm">
-                                        <div class="col-md-6">
-                                            <p class="mb-1"><strong>Date:</strong> {{ $part['last_service'] }}</p>
-                                            <p class="mb-1"><strong>SR Number:</strong> {{ $part['last_service_details']['sr_number'] }}</p>
-                                            <p class="mb-1"><strong>Mileage:</strong> {{ $part['last_service_km'] }}</p>
-                                            <p class="mb-1"><strong>Service Type:</strong> 
-                                                <span class="badge bg-info">{{ $part['last_service_details']['service_type'] }}</span>
-                                            </p>
-                                            <p class="mb-1"><strong>Priority:</strong> 
-                                                @php
-                                                    $priorityClass = 'priority-badge-' . strtolower(str_replace(' ', '', $part['last_service_details']['priority']));
-                                                @endphp
-                                                <span class="badge service-badge {{ $priorityClass }}">
-                                                    {{ $part['last_service_details']['priority'] }}
-                                                </span>
-                                            </p>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <p class="mb-1"><strong>Requested by:</strong> {{ $part['last_service_details']['requested_by'] }}</p>
-                                            <p class="mb-1"><strong>Serviced by:</strong> {{ $part['last_service_details']['serviced_by'] }}</p>
-                                            @if($part['last_service_details']['contractor'] !== 'No contractor')
-                                            <p class="mb-1"><strong>Contractor:</strong> {{ $part['last_service_details']['contractor'] }}</p>
+                            <div class="mb-3">
+                                <!-- Toggle Button -->
+                                <button class="btn btn-outline-primary btn-sm" type="button" 
+                                        data-bs-toggle="collapse" 
+                                        data-bs-target="#serviceDetails{{ $index }}" 
+                                        aria-expanded="false" 
+                                        aria-controls="serviceDetails{{ $index }}">
+                                    <i class="fas fa-eye me-1"></i> View Last Service Details
+                                    <i class="fas fa-chevron-down ms-1 toggle-icon"></i>
+                                </button>
+                                
+                                <!-- Collapsible Content -->
+                                <div class="collapse mt-2" id="serviceDetails{{ $index }}">
+                                    <div class="card service-details-card">
+                                        <div class="card-body p-3">
+                                            <h6 class="card-title text-primary mb-2">
+                                                <i class="fas fa-wrench"></i> Last Service Details
+                                            </h6>
+                                            
+                                            <div class="row text-sm">
+                                                <div class="col-md-6">
+                                                    <p class="mb-1"><strong>Date:</strong> {{ $part['last_service'] }}</p>
+                                                    <p class="mb-1"><strong>SR Number:</strong> {{ $part['last_service_details']['sr_number'] }}</p>
+                                                    <p class="mb-1"><strong>Mileage:</strong> {{ $part['last_service_km'] }}</p>
+                                                    <p class="mb-1"><strong>Service Type:</strong> 
+                                                        <span class="badge bg-info">{{ $part['last_service_details']['service_type'] }}</span>
+                                                    </p>
+                                                    <p class="mb-1"><strong>Priority:</strong> 
+                                                        @php
+                                                            $priorityClass = 'priority-badge-' . strtolower(str_replace(' ', '', $part['last_service_details']['priority']));
+                                                        @endphp
+                                                        <span class="badge service-badge {{ $priorityClass }}">
+                                                            {{ $part['last_service_details']['priority'] }}
+                                                        </span>
+                                                    </p>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <p class="mb-1"><strong>Requested by:</strong> {{ $part['last_service_details']['requested_by'] }}</p>
+                                                    <p class="mb-1"><strong>Serviced by:</strong> {{ $part['last_service_details']['serviced_by'] }}</p>
+                                                    @if($part['last_service_details']['contractor'] !== 'No contractor')
+                                                    <p class="mb-1"><strong>Contractor:</strong> {{ $part['last_service_details']['contractor'] }}</p>
+                                                    @endif
+                                                    <p class="mb-1"><strong>Depot:</strong> 
+                                                        @if(isset($part['last_service_details']['depot_info']) && is_array($part['last_service_details']['depot_info']))
+                                                            {{ $part['last_service_details']['depot_info']['name'] }} ({{ $part['last_service_details']['depot_info']['id'] }})
+                                                        @else
+                                                            {{ $part['last_service_details']['building'] ?? 'Unknown' }}
+                                                        @endif
+                                                    </p>
+                                                    <p class="mb-1"><strong>Status:</strong> 
+                                                        <span class="badge bg-success">{{ $part['last_service_details']['status'] }}</span>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            
+                                            @if($part['last_service_details']['description'] !== 'No description')
+                                            <div class="mt-2">
+                                                <strong>Description:</strong>
+                                                <p class="text-muted small mb-1">{{ $part['last_service_details']['description'] }}</p>
+                                            </div>
                                             @endif
-                                            <p class="mb-1"><strong>Depot:</strong> 
-                                                @if(isset($part['last_service_details']['depot_info']) && is_array($part['last_service_details']['depot_info']))
-                                                    {{ $part['last_service_details']['depot_info']['name'] }} ({{ $part['last_service_details']['depot_info']['id'] }})
-                                                @else
-                                                    {{ $part['last_service_details']['building'] ?? 'Unknown' }}
-                                                @endif
-                                            </p>
-                                            <p class="mb-1"><strong>Status:</strong> 
-                                                <span class="badge bg-success">{{ $part['last_service_details']['status'] }}</span>
-                                            </p>
-                                        </div>
-                                    </div>
-                                    
-                                    @if($part['last_service_details']['description'] !== 'No description')
-                                    <div class="mt-2">
-                                        <strong>Description:</strong>
-                                        <p class="text-muted small mb-1">{{ $part['last_service_details']['description'] }}</p>
-                                    </div>
-                                    @endif
-                                    
-                                    @if($part['last_service_details']['response'] !== 'No response')
-                                    <div class="mt-2">
-                                        <strong>Work Done:</strong>
-                                        <p class="text-success small mb-1">{{ Str::limit($part['last_service_details']['response'], 150) }}</p>
-                                    </div>
-                                    @endif
-                                    
-                                    <div class="mt-2">
-                                        <small class="text-muted">
-                                            <i class="fas fa-clock"></i> {{ $part['last_service_details']['days_ago'] }}
-                                            @if($part['last_service_details']['date_closed'] !== 'Not closed')
-                                                | Closed: {{ $part['last_service_details']['date_closed'] }}
+                                            
+                                            @if($part['last_service_details']['response'] !== 'No response')
+                                            <div class="mt-2">
+                                                <strong>Work Done:</strong>
+                                                <p class="text-success small mb-1">{{ Str::limit($part['last_service_details']['response'], 150) }}</p>
+                                            </div>
                                             @endif
-                                        </small>
+                                            
+                                            <div class="mt-2">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-clock"></i> {{ $part['last_service_details']['days_ago'] }}
+                                                    @if($part['last_service_details']['date_closed'] !== 'Not closed')
+                                                        | Closed: {{ $part['last_service_details']['date_closed'] }}
+                                                    @endif
+                                                </small>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             @else
-                            <div class="alert alert-warning py-2">
+                            <div class="alert alert-warning py-2 mb-3">
                                 <small><i class="fas fa-info-circle"></i> No detailed service history found for this component</small>
                             </div>
                             @endif
@@ -282,6 +342,7 @@
             </div>
             @endif
 
+            <!-- SOON PARTS - Updated with Collapsible Service Details -->
             @if(!empty($partsAnalysis['soon']))
             <div class="col-lg-6 mb-4">
                 <div class="card border-warning">
@@ -290,7 +351,7 @@
                         <small>Service within 2-4 weeks</small>
                     </div>
                     <div class="card-body">
-                        @foreach($partsAnalysis['soon'] as $part)
+                        @foreach($partsAnalysis['soon'] as $index => $part)
                         <div class="border-bottom mb-3 pb-3">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <div>
@@ -305,57 +366,72 @@
                                 <span class="badge bg-warning text-dark">Soon</span>
                             </div>
                             
-                            <!-- ENHANCED LAST SERVICE DETAILS FOR SOON PARTS -->
+                            <!-- COLLAPSIBLE SERVICE DETAILS FOR SOON PARTS -->
                             @if(isset($part['last_service_details']) && $part['last_service_details'])
-                            <div class="card service-details-card mb-3">
-                                <div class="card-body p-3">
-                                    <h6 class="card-title text-warning mb-2">
-                                        <i class="fas fa-tools"></i> Last Service History
-                                    </h6>
-                                    
-                                    <div class="row text-sm">
-                                        <div class="col-md-6">
-                                            <p class="mb-1"><strong>Date:</strong> {{ $part['last_service'] }}</p>
-                                            <p class="mb-1"><strong>SR:</strong> {{ $part['last_service_details']['sr_number'] }}</p>
-                                            <p class="mb-1"><strong>Mileage:</strong> {{ $part['last_service_km'] }}</p>
-                                            <p class="mb-1"><strong>Type:</strong> 
-                                                <span class="badge bg-secondary">{{ $part['last_service_details']['service_type'] }}</span>
-                                            </p>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <p class="mb-1"><strong>Technician:</strong> {{ $part['last_service_details']['serviced_by'] }}</p>
-                                            <p class="mb-1"><strong>Depot:</strong> 
-                                                @if(isset($part['last_service_details']['depot_info']))
-                                                    {{ $part['last_service_details']['depot_info']['name'] }} ({{ $part['last_service_details']['depot_info']['id'] }})
-                                                @else
-                                                    {{ $part['last_service_details']['building'] ?? 'Unknown' }}
-                                                @endif
-                                            </p>
-                                            @if($part['last_service_details']['contractor'] !== 'No contractor')
-                                            <p class="mb-1"><strong>Contractor:</strong> {{ $part['last_service_details']['contractor'] }}</p>
+                            <div class="mb-3">
+                                <!-- Toggle Button -->
+                                <button class="btn btn-outline-warning btn-sm" type="button" 
+                                        data-bs-toggle="collapse" 
+                                        data-bs-target="#soonServiceDetails{{ $index }}" 
+                                        aria-expanded="false" 
+                                        aria-controls="soonServiceDetails{{ $index }}">
+                                    <i class="fas fa-eye me-1"></i> View Service History
+                                    <i class="fas fa-chevron-down ms-1 toggle-icon"></i>
+                                </button>
+                                
+                                <!-- Collapsible Content -->
+                                <div class="collapse mt-2" id="soonServiceDetails{{ $index }}">
+                                    <div class="card service-details-card">
+                                        <div class="card-body p-3">
+                                            <h6 class="card-title text-warning mb-2">
+                                                <i class="fas fa-tools"></i> Last Service History
+                                            </h6>
+                                            
+                                            <div class="row text-sm">
+                                                <div class="col-md-6">
+                                                    <p class="mb-1"><strong>Date:</strong> {{ $part['last_service'] }}</p>
+                                                    <p class="mb-1"><strong>SR:</strong> {{ $part['last_service_details']['sr_number'] }}</p>
+                                                    <p class="mb-1"><strong>Mileage:</strong> {{ $part['last_service_km'] }}</p>
+                                                    <p class="mb-1"><strong>Type:</strong> 
+                                                        <span class="badge bg-secondary">{{ $part['last_service_details']['service_type'] }}</span>
+                                                    </p>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <p class="mb-1"><strong>Technician:</strong> {{ $part['last_service_details']['serviced_by'] }}</p>
+                                                    <p class="mb-1"><strong>Depot:</strong> 
+                                                        @if(isset($part['last_service_details']['depot_info']))
+                                                            {{ $part['last_service_details']['depot_info']['name'] }} ({{ $part['last_service_details']['depot_info']['id'] }})
+                                                        @else
+                                                            {{ $part['last_service_details']['building'] ?? 'Unknown' }}
+                                                        @endif
+                                                    </p>
+                                                    @if($part['last_service_details']['contractor'] !== 'No contractor')
+                                                    <p class="mb-1"><strong>Contractor:</strong> {{ $part['last_service_details']['contractor'] }}</p>
+                                                    @endif
+                                                    <p class="mb-1"><strong>Status:</strong> 
+                                                        <span class="badge bg-success">{{ $part['last_service_details']['status'] }}</span>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            
+                                            @if($part['last_service_details']['description'] !== 'No description')
+                                            <div class="mt-2">
+                                                <strong>Work Description:</strong>
+                                                <p class="text-muted small">{{ Str::limit($part['last_service_details']['description'], 120) }}</p>
+                                            </div>
                                             @endif
-                                            <p class="mb-1"><strong>Status:</strong> 
-                                                <span class="badge bg-success">{{ $part['last_service_details']['status'] }}</span>
-                                            </p>
+                                            
+                                            <div class="mt-2">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-history"></i> {{ $part['last_service_details']['days_ago'] }}
+                                                </small>
+                                            </div>
                                         </div>
-                                    </div>
-                                    
-                                    @if($part['last_service_details']['description'] !== 'No description')
-                                    <div class="mt-2">
-                                        <strong>Work Description:</strong>
-                                        <p class="text-muted small">{{ Str::limit($part['last_service_details']['description'], 120) }}</p>
-                                    </div>
-                                    @endif
-                                    
-                                    <div class="mt-2">
-                                        <small class="text-muted">
-                                            <i class="fas fa-history"></i> {{ $part['last_service_details']['days_ago'] }}
-                                        </small>
                                     </div>
                                 </div>
                             </div>
                             @else
-                            <div class="alert alert-info py-2">
+                            <div class="alert alert-info py-2 mb-3">
                                 <small><i class="fas fa-search"></i> No recent service history found for this component</small>
                             </div>
                             @endif
@@ -412,7 +488,7 @@
                 <div class="mb-4">
                     <h6 class="text-danger"><i class="fas fa-shield-alt me-1"></i>Priority 1 - Critical Safety Components</h6>
                     <div class="row">
-                        @foreach($priority1Parts as $part)
+                        @foreach($priority1Parts as $index => $part)
                         <div class="col-md-6 mb-3">
                             <div class="card border-success h-100">
                                 <div class="card-body p-3">
@@ -427,35 +503,50 @@
                                         <span class="badge bg-success">OK</span>
                                     </div>
                                     
-                                    <!-- DETAILED SERVICE HISTORY FOR PRIORITY 1 PARTS -->
+                                    <!-- COLLAPSIBLE SERVICE HISTORY FOR PRIORITY 1 PARTS -->
                                     @if(isset($part['last_service_details']) && $part['last_service_details'])
-                                    <div class="service-summary p-2 rounded mb-2">
-                                        <h6 class="text-success mb-1" style="font-size: 0.85rem;">
-                                            <i class="fas fa-check-circle"></i> Recent Service
-                                        </h6>
-                                        <div class="row text-sm">
-                                            <div class="col-12">
-                                                <p class="mb-1"><strong>{{ $part['last_service'] }}</strong> ({{ $part['last_service_details']['days_ago'] }})</p>
-                                                <p class="mb-1">SR: {{ $part['last_service_details']['sr_number'] }} | {{ $part['last_service_km'] }}</p>
-                                                <p class="mb-1">
-                                                    <span class="badge bg-info">{{ $part['last_service_details']['service_type'] }}</span>
-                                                    @php
-                                                        $priorityClass = 'priority-badge-' . strtolower(str_replace(' ', '', $part['last_service_details']['priority']));
-                                                    @endphp
-                                                    <span class="badge service-badge {{ $priorityClass }}">{{ $part['last_service_details']['priority'] }}</span>
-                                                </p>
-                                                @if($part['last_service_details']['serviced_by'] !== 'Unknown')
-                                                <p class="mb-1"><small><strong>Tech:</strong> {{ $part['last_service_details']['serviced_by'] }}</small></p>
-                                                @endif
-                                                @if(isset($part['last_service_details']['depot_info']))
-                                                <p class="mb-1"><small><strong>Depot:</strong> {{ $part['last_service_details']['depot_info']['name'] }}</small></p>
-                                                @endif
-                                                @if($part['last_service_details']['contractor'] !== 'No contractor')
-                                                <p class="mb-1"><small><strong>Contractor:</strong> {{ $part['last_service_details']['contractor'] }}</small></p>
-                                                @endif
-                                                @if($part['last_service_details']['description'] !== 'No description')
-                                                <p class="mb-0"><small><strong>Work:</strong> {{ Str::limit($part['last_service_details']['description'], 80) }}</small></p>
-                                                @endif
+                                    <div class="mb-2">
+                                        <!-- Toggle Button -->
+                                        <button class="btn btn-outline-info btn-sm service-details-toggle" type="button" 
+                                                data-bs-toggle="collapse" 
+                                                data-bs-target="#routineP1Details{{ $index }}" 
+                                                aria-expanded="false" 
+                                                aria-controls="routineP1Details{{ $index }}">
+                                            <i class="fas fa-eye me-1"></i> View Service History
+                                            <i class="fas fa-chevron-down ms-1 toggle-icon"></i>
+                                        </button>
+                                        
+                                        <!-- Collapsible Content -->
+                                        <div class="collapse mt-2" id="routineP1Details{{ $index }}">
+                                            <div class="service-summary p-2 rounded">
+                                                <h6 class="text-success mb-1" style="font-size: 0.85rem;">
+                                                    <i class="fas fa-check-circle"></i> Recent Service
+                                                </h6>
+                                                <div class="row text-sm">
+                                                    <div class="col-12">
+                                                        <p class="mb-1"><strong>{{ $part['last_service'] }}</strong> ({{ $part['last_service_details']['days_ago'] }})</p>
+                                                        <p class="mb-1">SR: {{ $part['last_service_details']['sr_number'] }} | {{ $part['last_service_km'] }}</p>
+                                                        <p class="mb-1">
+                                                            <span class="badge bg-info">{{ $part['last_service_details']['service_type'] }}</span>
+                                                            @php
+                                                                $priorityClass = 'priority-badge-' . strtolower(str_replace(' ', '', $part['last_service_details']['priority']));
+                                                            @endphp
+                                                            <span class="badge service-badge {{ $priorityClass }}">{{ $part['last_service_details']['priority'] }}</span>
+                                                        </p>
+                                                        @if($part['last_service_details']['serviced_by'] !== 'Unknown')
+                                                        <p class="mb-1"><small><strong>Tech:</strong> {{ $part['last_service_details']['serviced_by'] }}</small></p>
+                                                        @endif
+                                                        @if(isset($part['last_service_details']['depot_info']))
+                                                        <p class="mb-1"><small><strong>Depot:</strong> {{ $part['last_service_details']['depot_info']['name'] }}</small></p>
+                                                        @endif
+                                                        @if($part['last_service_details']['contractor'] !== 'No contractor')
+                                                        <p class="mb-1"><small><strong>Contractor:</strong> {{ $part['last_service_details']['contractor'] }}</small></p>
+                                                        @endif
+                                                        @if($part['last_service_details']['description'] !== 'No description')
+                                                        <p class="mb-0"><small><strong>Work:</strong> {{ Str::limit($part['last_service_details']['description'], 80) }}</small></p>
+                                                        @endif
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -498,7 +589,7 @@
                 <div class="mb-4">
                     <h6 class="text-warning"><i class="fas fa-cog me-1"></i>Priority 2 - Important Maintenance Components</h6>
                     <div class="row">
-                        @foreach($priority2Parts as $part)
+                        @foreach($priority2Parts as $index => $part)
                         <div class="col-md-6 mb-3">
                             <div class="card border-info h-100">
                                 <div class="card-body p-3">
@@ -513,27 +604,42 @@
                                         <span class="badge bg-info">Good</span>
                                     </div>
                                     
-                                    <!-- DETAILED SERVICE HISTORY FOR PRIORITY 2 PARTS -->
+                                    <!-- COLLAPSIBLE SERVICE HISTORY FOR PRIORITY 2 PARTS -->
                                     @if(isset($part['last_service_details']) && $part['last_service_details'])
-                                    <div class="service-summary p-2 rounded mb-2">
-                                        <h6 class="text-info mb-1" style="font-size: 0.85rem;">
-                                            <i class="fas fa-wrench"></i> Last Maintenance
-                                        </h6>
-                                        <div class="text-sm">
-                                            <p class="mb-1">{{ $part['last_service'] }} | {{ $part['last_service_km'] }}</p>
-                                            <p class="mb-1">SR: {{ $part['last_service_details']['sr_number'] }}</p>
-                                            <p class="mb-1">
-                                                <span class="badge bg-secondary">{{ $part['last_service_details']['service_type'] }}</span>
-                                                @if($part['last_service_details']['contractor'] !== 'No contractor')
-                                                    <span class="badge bg-primary">{{ Str::limit($part['last_service_details']['contractor'], 15) }}</span>
-                                                @endif
-                                                @if(isset($part['last_service_details']['depot_info']))
-                                                    <span class="badge bg-secondary">{{ $part['last_service_details']['depot_info']['id'] }}</span>
-                                                @endif
-                                            </p>
-                                            @if($part['last_service_details']['description'] !== 'No description')
-                                            <p class="mb-0"><small>{{ Str::limit($part['last_service_details']['description'], 60) }}</small></p>
-                                            @endif
+                                    <div class="mb-2">
+                                        <!-- Toggle Button -->
+                                        <button class="btn btn-outline-info btn-sm service-details-toggle" type="button" 
+                                                data-bs-toggle="collapse" 
+                                                data-bs-target="#routineP2Details{{ $index }}" 
+                                                aria-expanded="false" 
+                                                aria-controls="routineP2Details{{ $index }}">
+                                            <i class="fas fa-eye me-1"></i> View Maintenance
+                                            <i class="fas fa-chevron-down ms-1 toggle-icon"></i>
+                                        </button>
+                                        
+                                        <!-- Collapsible Content -->
+                                        <div class="collapse mt-2" id="routineP2Details{{ $index }}">
+                                            <div class="service-summary p-2 rounded">
+                                                <h6 class="text-info mb-1" style="font-size: 0.85rem;">
+                                                    <i class="fas fa-wrench"></i> Last Maintenance
+                                                </h6>
+                                                <div class="text-sm">
+                                                    <p class="mb-1">{{ $part['last_service'] }} | {{ $part['last_service_km'] }}</p>
+                                                    <p class="mb-1">SR: {{ $part['last_service_details']['sr_number'] }}</p>
+                                                    <p class="mb-1">
+                                                        <span class="badge bg-secondary">{{ $part['last_service_details']['service_type'] }}</span>
+                                                        @if($part['last_service_details']['contractor'] !== 'No contractor')
+                                                            <span class="badge bg-primary">{{ Str::limit($part['last_service_details']['contractor'], 15) }}</span>
+                                                        @endif
+                                                        @if(isset($part['last_service_details']['depot_info']))
+                                                            <span class="badge bg-secondary">{{ $part['last_service_details']['depot_info']['id'] }}</span>
+                                                        @endif
+                                                    </p>
+                                                    @if($part['last_service_details']['description'] !== 'No description')
+                                                    <p class="mb-0"><small>{{ Str::limit($part['last_service_details']['description'], 60) }}</small></p>
+                                                    @endif
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     @endif
@@ -572,7 +678,7 @@
                 <div class="mb-3">
                     <h6 class="text-secondary"><i class="fas fa-wrench me-1"></i>Priority 3 - Routine Maintenance Components</h6>
                     <div class="row">
-                        @foreach($priority3Parts as $part)
+                        @foreach($priority3Parts as $index => $part)
                         <div class="col-md-6 mb-3">
                             <div class="card border-secondary h-100">
                                 <div class="card-body p-3">
@@ -587,21 +693,36 @@
                                         <span class="badge bg-secondary">Routine</span>
                                     </div>
                                     
-                                    <!-- SERVICE HISTORY FOR PRIORITY 3 PARTS -->
+                                    <!-- COLLAPSIBLE SERVICE HISTORY FOR PRIORITY 3 PARTS -->
                                     @if(isset($part['last_service_details']) && $part['last_service_details'])
-                                    <div class="service-summary p-2 rounded mb-2">
-                                        <h6 class="text-secondary mb-1" style="font-size: 0.85rem;">
-                                            <i class="fas fa-tools"></i> Service History
-                                        </h6>
-                                        <div class="text-sm">
-                                            <p class="mb-1">{{ $part['last_service'] }}</p>
-                                            <p class="mb-1">{{ $part['last_service_km'] }} | {{ $part['last_service_details']['days_ago'] }}</p>
-                                            @if($part['last_service_details']['service_type'] !== 'Unknown')
-                                            <p class="mb-1"><span class="badge bg-secondary">{{ $part['last_service_details']['service_type'] }}</span></p>
-                                            @endif
-                                            @if($part['last_service_details']['description'] !== 'No description')
-                                            <p class="mb-0"><small>{{ Str::limit($part['last_service_details']['description'], 50) }}</small></p>
-                                            @endif
+                                    <div class="mb-2">
+                                        <!-- Toggle Button -->
+                                        <button class="btn btn-outline-secondary btn-sm service-details-toggle" type="button" 
+                                                data-bs-toggle="collapse" 
+                                                data-bs-target="#routineP3Details{{ $index }}" 
+                                                aria-expanded="false" 
+                                                aria-controls="routineP3Details{{ $index }}">
+                                            <i class="fas fa-eye me-1"></i> View History
+                                            <i class="fas fa-chevron-down ms-1 toggle-icon"></i>
+                                        </button>
+                                        
+                                        <!-- Collapsible Content -->
+                                        <div class="collapse mt-2" id="routineP3Details{{ $index }}">
+                                            <div class="service-summary p-2 rounded">
+                                                <h6 class="text-secondary mb-1" style="font-size: 0.85rem;">
+                                                    <i class="fas fa-tools"></i> Service History
+                                                </h6>
+                                                <div class="text-sm">
+                                                    <p class="mb-1">{{ $part['last_service'] }}</p>
+                                                    <p class="mb-1">{{ $part['last_service_km'] }} | {{ $part['last_service_details']['days_ago'] }}</p>
+                                                    @if($part['last_service_details']['service_type'] !== 'Unknown')
+                                                    <p class="mb-1"><span class="badge bg-secondary">{{ $part['last_service_details']['service_type'] }}</span></p>
+                                                    @endif
+                                                    @if($part['last_service_details']['description'] !== 'No description')
+                                                    <p class="mb-0"><small>{{ Str::limit($part['last_service_details']['description'], 50) }}</small></p>
+                                                    @endif
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     @endif
@@ -633,175 +754,20 @@
         </div>
         @endif
 
-        <!-- 📋 ACTION PLAN - MOVED AFTER PARTS -->
-        <div class="card mb-4">
-            <div class="card-header bg-secondary text-white">
-                <h5><i class="fas fa-list-ol"></i> 📋 Recommended Action Plan</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-8">
-                        @php
-                            $actionPlan = $recommendations['action_plan'] ?? ['📅 Schedule regular vehicle maintenance'];
-                            $priority = $recommendations['priority'] ?? 'routine';
-                        @endphp
-                        
-                        @if(!empty($actionPlan))
-                            <ol class="list-group list-group-numbered">
-                                @foreach($actionPlan as $action)
-                                <li class="list-group-item">{!! $action !!}</li>
-                                @endforeach
-                                <li class="list-group-item">📞 Contact the manager to schedule maintenance</li>
-                                <li class="list-group-item">🔧 Follow recommended maintenance procedures</li>
-                                <li class="list-group-item">📅 Schedule next check at {{ number_format($serviceSchedule['next_routine']['mileage'] ?? 0) }} KM</li>
-                            </ol>
-                        @else
-                            <p class="text-muted">No specific action plan available. Continue with regular vehicle operations.</p>
-                        @endif
-                    </div>
-                    <div class="col-md-4">
-                        <div class="alert alert-light">
-                            <h6><i class="fas fa-info-circle"></i> Vehicle Analytics</h6>
-                            <p class="mb-1"><strong>Total Services:</strong> {{ $vehicleHistory['total_services'] ?? 0 }}</p>
-                            @if(isset($vehicleHistory['last_service']) && $vehicleHistory['last_service'])
-                            <p class="mb-1"><strong>Last Service:</strong> {{ Carbon\Carbon::parse($vehicleHistory['last_service']->Datereceived)->format('d M Y') }}</p>
-                            <p class="mb-1"><strong>Days Ago:</strong> {{ intval($vehicleHistory['days_since_last'] ?? 0) }} days</p>
-                            @endif
-                            <p class="mb-1"><strong>Avg Interval:</strong> {{ number_format($vehicleHistory['average_interval'] ?? 1000) }} KM</p>
-                            <p class="mb-0"><strong>Vehicle Type:</strong> {{ $vehicleHistory['vehicle_type'] ?? 'Unknown' }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Quick Action Buttons - MOVED UP -->
         <div class="text-center mb-4">
             <button class="btn btn-success btn-lg me-3" onclick="scheduleService()">
                 <i class="fas fa-wrench"></i> Schedule Vehicle Maintenance
             </button>
+            <a href="{{ route('maintenance.history', ['vehicle' => $vehicle, 'mileage' => $currentMileage]) }}" class="btn btn-info btn-lg me-3">
+                <i class="fas fa-history"></i> View Full Maintenance History
+            </a>
             <a href="{{ route('prediction.index') }}" class="btn btn-primary btn-lg me-3">
                 <i class="fas fa-plus"></i> Analyze Another Vehicle
             </a>
             <button onclick="window.print()" class="btn btn-secondary btn-lg me-3">
                 <i class="fas fa-print"></i> Print Vehicle Report
             </button>
-        </div>
-
-        <!-- Service History Summary Cards -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card border-success">
-                    <div class="card-body text-center">
-                        <h3 class="text-success">{{ $vehicleHistory['total_services'] }}</h3>
-                        <p class="mb-0"><strong>Total Services</strong></p>
-                        <small class="text-muted">Complete maintenance history</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card border-info">
-                    <div class="card-body text-center">
-                        <h3 class="text-info">{{ $vehicleHistory['service_patterns']['services_per_month'] ?? 'N/A' }}</h3>
-                        <p class="mb-0"><strong>Services/Month</strong></p>
-                        <small class="text-muted">Average frequency</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card border-warning">
-                    <div class="card-body text-center">
-                        <h3 class="text-warning">{{ number_format($vehicleHistory['average_interval']) }} KM</h3>
-                        <p class="mb-0"><strong>Avg Interval</strong></p>
-                        <small class="text-muted">Between services</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card border-secondary">
-                    <div class="card-body text-center">
-                        <h3 class="text-secondary">{{ $vehicleHistory['service_patterns']['data_quality'] ?? 'N/A' }}%</h3>
-                        <p class="mb-0"><strong>Data Quality</strong></p>
-                        <small class="text-muted">Mileage records</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Recent Maintenance History - MOVED OUT OF COLLAPSIBLE -->
-        <div class="card mb-4">
-            <div class="card-header bg-secondary text-white">
-                <h5><i class="fas fa-history"></i> 📋 Recent Maintenance History</h5>
-            </div>
-            <div class="card-body">
-                @if(isset($vehicleHistory['processed_history']) && $vehicleHistory['processed_history'] && $vehicleHistory['processed_history']->isNotEmpty())
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Service Type</th>
-                                <th>Description</th>
-                                <th>Mileage</th>
-                                <th>Days Ago</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($vehicleHistory['processed_history']->take(10) as $service)
-                            <tr>
-                                <td>
-                                    <strong>{{ $service['date'] ?? 'Unknown date' }}</strong><br>
-                                    <small class="text-muted">{{ $service['sr_number'] ?? 'No SR' }}</small>
-                                </td>
-                                <td>
-                                    <span class="badge 
-                                        @if(($service['service_type'] ?? '') == 'Repair') bg-danger
-                                        @elseif(($service['service_type'] ?? '') == 'Cleaning') bg-info  
-                                        @elseif(($service['service_type'] ?? '') == 'Maintenance') bg-success
-                                        @else bg-secondary @endif">
-                                        {{ $service['service_type'] ?? 'Unknown' }}
-                                    </span>
-                                </td>
-                                <td>
-                                    {{ $service['description'] ?? 'No description' }}
-                                    @if(($service['category'] ?? '') && $service['category'] != 'General')
-                                    <br><small class="text-muted">{{ $service['category'] }}</small>
-                                    @endif
-                                </td>
-                                <td>
-                                    <strong>{{ $service['odometer'] ?? 'Not recorded' }}</strong>
-                                </td>
-                                <td>{{ $service['days_ago'] ?? 'Unknown' }} days</td>
-                                <td>
-                                    <span class="badge 
-                                        @if(($service['status'] ?? '') == 'Completed') bg-success
-                                        @elseif(($service['status'] ?? '') == 'Pending') bg-warning
-                                        @else bg-secondary @endif">
-                                        {{ $service['status'] ?? 'Unknown' }}
-                                    </span>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                
-                @if($vehicleHistory['processed_history']->count() > 10)
-                <div class="text-center mt-3">
-                    <button class="btn btn-outline-secondary" onclick="toggleFullHistory()">
-                        <i class="fas fa-plus"></i> Show All {{ $vehicleHistory['total_services'] }} Services
-                    </button>
-                </div>
-                @endif
-                @else
-                <div class="alert alert-info">
-                    <h6><i class="fas fa-info-circle"></i> No Maintenance History</h6>
-                    <p class="mb-0">No previous maintenance records found for this vehicle. This appears to be a new vehicle or the first service request.</p>
-                    <p>Showing {{ $vehicleHistory['total_services'] ?? 0 }} total service records for this vehicle.</p>
-                </div>
-                @endif
-            </div>
         </div>
     </div>
 </div>
@@ -815,6 +781,102 @@ function scheduleService() {
 
 function toggleFullHistory() {
     alert('Full history view would expand here - showing all {{ $vehicleHistory["total_services"] ?? 0 }} service records');
+}
+
+// Enhanced collapsible functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle collapse events for better UX
+    const collapseElements = document.querySelectorAll('[data-bs-toggle="collapse"]');
+    
+    collapseElements.forEach(function(element) {
+        element.addEventListener('click', function() {
+            const icon = this.querySelector('.toggle-icon');
+            const isExpanded = this.getAttribute('aria-expanded') === 'true';
+            
+            // Update button text
+            const textElement = this.childNodes[1]; // The text node
+            if (isExpanded) {
+                textElement.textContent = ' Hide Service Details';
+                this.querySelector('.fa-eye').classList.remove('fa-eye');
+                this.querySelector('.fa-eye').classList.add('fa-eye-slash');
+            } else {
+                textElement.textContent = ' View Service Details';
+                this.querySelector('.fa-eye-slash')?.classList.remove('fa-eye-slash');
+                this.querySelector('.fas').classList.add('fa-eye');
+            }
+        });
+    });
+
+    // Add event listeners for Bootstrap collapse events
+    const collapseTargets = document.querySelectorAll('.collapse');
+    
+    collapseTargets.forEach(function(collapseTarget) {
+        collapseTarget.addEventListener('show.bs.collapse', function() {
+            const button = document.querySelector(`[data-bs-target="#${this.id}"]`);
+            if (button) {
+                button.classList.add('active');
+                const icon = button.querySelector('.toggle-icon');
+                if (icon) {
+                    icon.style.transform = 'rotate(180deg)';
+                }
+                
+                // Update text and icon
+                const eyeIcon = button.querySelector('.fas');
+                if (eyeIcon && eyeIcon.classList.contains('fa-eye')) {
+                    eyeIcon.classList.remove('fa-eye');
+                    eyeIcon.classList.add('fa-eye-slash');
+                }
+                
+                // Update text content
+                const textNode = Array.from(button.childNodes).find(node => 
+                    node.nodeType === Node.TEXT_NODE && node.textContent.includes('View')
+                );
+                if (textNode) {
+                    textNode.textContent = ' Hide Service Details';
+                }
+            }
+        });
+
+        collapseTarget.addEventListener('hide.bs.collapse', function() {
+            const button = document.querySelector(`[data-bs-target="#${this.id}"]`);
+            if (button) {
+                button.classList.remove('active');
+                const icon = button.querySelector('.toggle-icon');
+                if (icon) {
+                    icon.style.transform = 'rotate(0deg)';
+                }
+                
+                // Update text and icon
+                const eyeIcon = button.querySelector('.fas');
+                if (eyeIcon && eyeIcon.classList.contains('fa-eye-slash')) {
+                    eyeIcon.classList.remove('fa-eye-slash');
+                    eyeIcon.classList.add('fa-eye');
+                }
+                
+                // Update text content
+                const textNode = Array.from(button.childNodes).find(node => 
+                    node.nodeType === Node.TEXT_NODE && node.textContent.includes('Hide')
+                );
+                if (textNode) {
+                    textNode.textContent = ' View Service Details';
+                }
+            }
+        });
+    });
+
+// Function to toggle all collapsibles in a section
+function toggleAllInSection(sectionType, expand) {
+    const selector = sectionType === 'immediate' ? '#serviceDetails' : '#soonServiceDetails';
+    const collapses = document.querySelectorAll(`[id^="${selector.substring(1)}"]`);
+    
+    collapses.forEach(function(collapse) {
+        const bsCollapse = new bootstrap.Collapse(collapse, { toggle: false });
+        if (expand) {
+            bsCollapse.show();
+        } else {
+            bsCollapse.hide();
+        }
+    });
 }
 </script>
 
@@ -985,6 +1047,182 @@ function toggleFullHistory() {
     .service-details-card {
         background: #f8f9fa !important;
         border: 1px solid #dee2e6 !important;
+    }
+}
+
+.four-box-row .card {
+    height: 100%;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.four-box-row .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.four-box-row .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 140px;
+}
+
+.four-box-row .card-body h3 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin: 0.5rem 0;
+}
+
+/* Responsive adjustments for four boxes */
+@media (max-width: 1200px) {
+    .four-box-row .card-body h3 {
+        font-size: 1.6rem;
+    }
+    .four-box-row .card-body {
+        min-height: 130px;
+    }
+}
+
+@media (max-width: 992px) {
+    .four-box-row .card-body h3 {
+        font-size: 1.4rem;
+    }
+    .four-box-row .card-body {
+        min-height: 120px;
+    }
+    .four-box-row .card-header h5 {
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .four-box-row .card-body h3 {
+        font-size: 1.3rem;
+    }
+    .four-box-row .card-body {
+        min-height: 110px;
+        padding: 1rem 0.75rem;
+    }
+    .four-box-row .card-header h5 {
+        font-size: 0.9rem;
+    }
+    .four-box-row .card-body p {
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .four-box-row .col-sm-6 {
+        margin-bottom: 1rem;
+    }
+    .four-box-row .card-body h3 {
+        font-size: 1.2rem;
+    }
+    .four-box-row .card-body {
+        min-height: 100px;
+        padding: 0.75rem;
+    }
+}
+
+/* Equal height cards */
+.four-box-row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.four-box-row > [class*="col-"] {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Collapsible Service Details Styles */
+.toggle-icon {
+    transition: transform 0.2s ease;
+}
+
+.collapse.show + .toggle-icon,
+[aria-expanded="true"] .toggle-icon {
+    transform: rotate(180deg);
+}
+
+.service-details-toggle {
+    border: 1px solid #dee2e6;
+    background: #f8f9fa;
+    transition: all 0.2s ease;
+}
+
+.service-details-toggle:hover {
+    background: #e9ecef;
+    border-color: #ced4da;
+}
+
+.service-details-toggle:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Animation for collapse */
+.collapse {
+    transition: height 0.35s ease;
+}
+
+.collapsing {
+    transition: height 0.35s ease;
+}
+
+/* Enhanced service details card when collapsed/expanded */
+.service-details-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-left: 4px solid #007bff;
+    transition: all 0.3s ease;
+    margin-top: 0.5rem;
+}
+
+.service-details-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+/* Button styling for different urgency levels */
+.btn-outline-primary.service-details-toggle {
+    border-color: #007bff;
+    color: #007bff;
+}
+
+.btn-outline-warning.service-details-toggle {
+    border-color: #ffc107;
+    color: #856404;
+}
+
+.btn-outline-info.service-details-toggle {
+    border-color: #17a2b8;
+    color: #17a2b8;
+}
+
+/* Smooth animation for the chevron icon */
+.btn[data-bs-toggle="collapse"] .toggle-icon {
+    transition: transform 0.3s ease;
+}
+
+.btn[data-bs-toggle="collapse"][aria-expanded="true"] .toggle-icon {
+    transform: rotate(180deg);
+}
+
+/* Responsive adjustments for service detail buttons */
+@media (max-width: 768px) {
+    .btn-outline-primary.service-details-toggle,
+    .btn-outline-warning.service-details-toggle,
+    .btn-outline-info.service-details-toggle {
+        font-size: 0.8rem;
+        padding: 0.25rem 0.5rem;
+    }
+    
+    .service-details-card .card-body {
+        padding: 0.75rem;
+    }
+    
+    .service-details-card .row .col-md-6 {
+        margin-bottom: 0.5rem;
     }
 }
 </style>

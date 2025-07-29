@@ -9,7 +9,12 @@ use Illuminate\Http\Request;
 // Main application routes
 Route::get('/', [PredictionController::class, 'index'])->name('prediction.index');
 Route::post('/predict', [PredictionController::class, 'predict'])->name('prediction.predict');
+Route::get('/prediction/{vehicle}/{mileage}', [PredictionController::class, 'showPrediction'])->name('prediction.show');
 Route::post('/quick-save', [PredictionController::class, 'quickSave'])->name('prediction.quickSave');
+
+// Maintenance history routes
+Route::get('/maintenance-history/{vehicle}/{mileage?}', [PredictionController::class, 'maintenanceHistory'])->name('maintenance.history');
+Route::get('/maintenance-history/{vehicle}/export', [PredictionController::class, 'exportHistory'])->name('maintenance.history.export');
 
 // Service Request routes (updated for existing table)
 Route::get('/maintenance', [MaintenanceController::class, 'index'])->name('maintenance.index');
