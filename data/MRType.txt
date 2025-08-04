@@ -1,0 +1,6 @@
+ID	MRType
+1	Senggaraan
+2	Cuci
+3	Tayar
+4	Rental
+5	Operation

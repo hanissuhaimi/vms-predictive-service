@@ -62,17 +62,26 @@
     </div>
 
     <!-- Statistics Overview -->
-    <div class="row mb-4">
-        <div class="col-md-3 mb-3">
+    <div class="d-flex flex-wrap justify-content-between gap-3 mb-4">
+        <div class="flex-fill" style="min-width: 18%;">
             <div class="card border-primary h-100">
                 <div class="card-body text-center">
                     <h2 class="text-primary">{{ number_format($totalRecords) }}</h2>
-                    <h6 class="card-title">Total Services</h6>
-                    <p class="text-muted small">Complete maintenance history</p>
+                    <h6 class="card-title">Total Records</h6>
+                    <p class="text-muted small">All service records</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 mb-3">
+        <div class="flex-fill" style="min-width: 18%;">
+            <div class="card border-success h-100">
+                <div class="card-body text-center">
+                    <h2 class="text-success">{{ number_format($vehicleHistory['total_services'] ?? 0) }}</h2>
+                    <h6 class="card-title">Maintenance Services</h6>
+                    <p class="text-muted small">Excludes cleaning/washing</p>
+                </div>
+            </div>
+        </div>
+        <div class="flex-fill" style="min-width: 18%;">
             <div class="card border-info h-100">
                 <div class="card-body text-center">
                     <h2 class="text-info">{{ $vehicleHistory['service_patterns']['services_per_month'] ?? 'N/A' }}</h2>
@@ -81,7 +90,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3 mb-3">
+        <div class="flex-fill" style="min-width: 18%;">
             <div class="card border-warning h-100">
                 <div class="card-body text-center">
                     <h2 class="text-warning">{{ number_format($vehicleHistory['average_interval']) }} KM</h2>
@@ -90,7 +99,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3 mb-3">
+        <div class="flex-fill" style="min-width: 18%;">
             <div class="card border-success h-100">
                 <div class="card-body text-center">
                     <h2 class="text-success">{{ $vehicleHistory['service_patterns']['data_quality'] ?? 'N/A' }}%</h2>
@@ -114,7 +123,12 @@
                         @foreach($serviceStats['by_type'] as $type)
                         <div class="mb-2">
                             <div class="d-flex justify-content-between">
-                                <span>{{ $type['name'] }}</span>
+                                <span>
+                                    {{ $type['name'] }}
+                                    @if($type['name'] == 'Cleaning/Washing')
+                                        {{-- <small class="text-muted">(excluded from intervals)</small> --}}
+                                    @endif
+                                </span>
                                 <span><strong>{{ $type['count'] }}</strong> ({{ $type['percentage'] }}%)</span>
                             </div>
                             <div class="progress" style="height: 8px;">
@@ -122,11 +136,22 @@
                                     @if($type['name'] == 'Repair') bg-danger
                                     @elseif($type['name'] == 'Maintenance') bg-success
                                     @elseif($type['name'] == 'Cleaning/Washing') bg-info
+                                    @elseif($type['name'] == 'Inspection') bg-warning
                                     @else bg-secondary @endif" 
                                     style="width: {{ $type['percentage'] }}%"></div>
                             </div>
                         </div>
                         @endforeach
+                        {{-- Add maintenance analytics note --}}
+                        @if(isset($vehicleHistory['service_patterns']['maintenance_vs_total']))
+                        <div class="mt-3 p-2 bg-light rounded">
+                            <small class="text-muted">
+                                <i class="fas fa-calculator"></i> 
+                                <strong>Interval Calculation:</strong> Based on {{ $vehicleHistory['total_services'] ?? 0 }} maintenance services
+                                ({{ $vehicleHistory['service_patterns']['maintenance_vs_total']['cleaning_count'] ?? 0 }} cleaning services excluded)
+                            </small>
+                        </div>
+                        @endif
                     @else
                         <p class="text-muted">No service type data available</p>
                     @endif
@@ -167,7 +192,69 @@
                     <h6><i class="fas fa-chart-line"></i> Yearly Activity</h6>
                 </div>
                 <div class="card-body">
-                    @if(isset($serviceStats['by_year']) && $serviceStats['by_year']->isNotEmpty())
+                    @if(isset($serviceStats['by_year_split']) && $serviceStats['by_year_split']->isNotEmpty())
+                        @foreach($serviceStats['by_year_split']->take(5) as $year => $data)
+                        <div class="mb-3">
+                            <!-- Year Header -->
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <strong>{{ $year }}</strong>
+                                <span class="badge bg-primary">{{ $data['total'] }} total</span>
+                            </div>
+                            
+                            <!-- Maintenance Bar -->
+                            <div class="mb-1">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-success">
+                                        <i class="fas fa-wrench"></i> Maintenance
+                                    </small>
+                                    <small><strong>{{ $data['maintenance'] }}</strong> ({{ $data['maintenance_percentage'] }}%)</small>
+                                </div>
+                                <div class="progress" style="height: 6px;">
+                                    @php
+                                        $maxTotal = $serviceStats['by_year_split']->max('total');
+                                        $maintenanceWidth = $maxTotal > 0 ? ($data['maintenance'] / $maxTotal) * 100 : 0;
+                                    @endphp
+                                    <div class="progress-bar bg-success" style="width: {{ $maintenanceWidth }}%"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Cleaning Bar -->
+                            <div class="mb-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-info">
+                                        <i class="fas fa-spray-can"></i> Cleaning
+                                    </small>
+                                    <small><strong>{{ $data['cleaning'] }}</strong> ({{ $data['cleaning_percentage'] }}%)</small>
+                                </div>
+                                <div class="progress" style="height: 6px;">
+                                    @php
+                                        $cleaningWidth = $maxTotal > 0 ? ($data['cleaning'] / $maxTotal) * 100 : 0;
+                                    @endphp
+                                    <div class="progress-bar bg-info" style="width: {{ $cleaningWidth }}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                        
+                        <!-- Summary Analytics -->
+                        @php
+                            $totalMaintenance = $serviceStats['by_year_split']->sum('maintenance');
+                            $totalCleaning = $serviceStats['by_year_split']->sum('cleaning');
+                            $grandTotal = $totalMaintenance + $totalCleaning;
+                        @endphp
+                        
+                        @if($grandTotal > 0)
+                        <div class="mt-3 p-2 bg-light rounded">
+                            <small class="text-muted">
+                                <strong>Overall Split:</strong><br>
+                                🔧 {{ round(($totalMaintenance / $grandTotal) * 100, 1) }}% Maintenance<br>
+                                🧽 {{ round(($totalCleaning / $grandTotal) * 100, 1) }}% Cleaning
+                            </small>
+                        </div>
+                        @endif
+                        
+                    @elseif(isset($serviceStats['by_year']) && $serviceStats['by_year']->isNotEmpty())
+                        {{-- Fallback to simple yearly data if split data not available --}}
                         @foreach($serviceStats['by_year']->take(5) as $year => $count)
                         <div class="mb-2">
                             <div class="d-flex justify-content-between">
@@ -191,6 +278,28 @@
         </div>
     </div>
 
+    <!-- Service Analytics Summary -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="alert alert-info">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h6 class="mb-1"><i class="fas fa-chart-line"></i> Maintenance Analytics</h6>
+                        <p class="mb-0">
+                            Showing <strong>{{ number_format($totalRecords) }}</strong> total records 
+                            ({{ number_format($vehicleHistory['total_services'] ?? 0) }} maintenance services, 
+                            {{ number_format(($vehicleHistory['service_patterns']['maintenance_vs_total']['cleaning_count'] ?? 0)) }} cleaning services)
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <span class="badge bg-primary">Avg Interval: {{ number_format($vehicleHistory['average_interval'] ?? 0) }} KM</span>
+                        <br><small class="text-muted">Calculated from maintenance services only</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Search and Filter -->
     <div class="row mb-3">
         <div class="col-12">
@@ -205,9 +314,11 @@
                             <label class="form-label">Service Type</label>
                             <select class="form-select" id="typeFilter">
                                 <option value="">All Types</option>
-                                <option value="Repair">Repair</option>
-                                <option value="Maintenance">Maintenance</option>
-                                <option value="Cleaning">Cleaning</option>
+                                <option value="Maintenance">🔧 Maintenance</option>
+                                <option value="Repair">⚙️ Repair</option>
+                                <option value="Cleaning">🧽 Cleaning/Washing</option>
+                                <option value="Inspection">🔍 Inspection</option>
+                                <option value="Other">📋 Other</option>
                             </select>
                         </div>
                         <div class="col-md-2">
@@ -264,7 +375,7 @@
                             <th>Description</th>
                             <th>Mileage</th>
                             <th>Priority</th>
-                            <th>Status</th>
+                            <!--<th>Status</th>-->
                             <th>Technician</th>
                             <th>Depot</th>
                             <th>Days Ago</th>
@@ -333,7 +444,7 @@
                                 </span>
                             </td>
                             
-                            <td>
+                            {{-- <td>
                                 <span class="badge 
                                     @if(($record->status_text ?? '') == 'Completed') bg-success
                                     @elseif(($record->status_text ?? '') == 'Pending') bg-warning text-dark
@@ -341,7 +452,7 @@
                                     @else bg-secondary @endif">
                                     {{ $record->status_text ?? 'Unknown' }}
                                 </span>
-                            </td>
+                            </td> --}}
                             
                             <td>
                                 <small>

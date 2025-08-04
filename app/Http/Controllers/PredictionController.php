@@ -1367,7 +1367,7 @@ class PredictionController extends Controller
             }
 
             // Add cost & time transparency
-            $recommendations['action_plan'][] = '💰 COST: Based on Malaysian workshop rates - ' . $timeEstimate . ' needed';
+            $recommendations['action_plan'][] = '💰 COST: Based on Malaysian workshop rates (~' . $timeEstimate . ') needed';
 
             return $recommendations;
             
@@ -1449,23 +1449,29 @@ private function getVehicleHistory($vehicleNumber)
         Log::info("Getting vehicle history for: {$vehicleNumber}");
         
         // Get all service records for this vehicle
-        $records = ServiceRequest::whereRaw('UPPER(TRIM(Vehicle)) = ?', [strtoupper(trim($vehicleNumber))])
+        $allRecords = ServiceRequest::whereRaw('UPPER(TRIM(Vehicle)) = ?', [strtoupper(trim($vehicleNumber))])
             ->where(function($query) {
                 $query->whereNotNull('Datereceived')
-                      ->orWhereNotNull('DateModify')  // Alternative date field
-                      ->orWhereNotNull('responseDate') // Another alternative
-                      ->orWhere('ID', '>', 0);        // Include all records if no dates
+                      ->orWhereNotNull('DateModify')
+                      ->orWhereNotNull('responseDate')
+                      ->orWhere('ID', '>', 0);
             })
             ->orderBy(function($query) {
-                // Smart ordering: use best available date
                 return $query->selectRaw('COALESCE(Datereceived, DateModify, responseDate, getdate())');
             }, 'desc')
             ->get();
         
-        if ($records->isEmpty()) {
+        // FIXED: Filter out cleaning services (MrType = '2') for maintenance calculations
+        $maintenanceRecords = $allRecords->filter(function ($record) {
+            return trim($record->MrType ?? '') !== '2'; // Exclude cleaning/washing
+        });
+        
+        if ($maintenanceRecords->isEmpty()) {
             return [
                 'total_services' => 0,
-                'records' => collect([]),
+                'total_all_records' => $allRecords->count(),
+                'records' => $allRecords,
+                'maintenance_records' => collect([]),
                 'last_service' => null,
                 'average_interval' => 0,
                 'days_since_last' => 0,
@@ -1475,24 +1481,24 @@ private function getVehicleHistory($vehicleNumber)
             ];
         }
         
-        // Process the records
-        $processedHistory = $this->processServiceHistory($records);
+        // Process maintenance records only
+        $processedHistory = $this->processServiceHistory($maintenanceRecords);
         
         // Calculate service patterns
-        $servicePatterns = $this->calculateServicePatterns($records);
+        $servicePatterns = $this->calculateServicePatterns($allRecords, $maintenanceRecords);
         
-        // Calculate intervals between services
-        $intervals = $this->calculateServiceIntervals($records);
+        // FIXED: Calculate intervals between maintenance services only
+        $intervals = $this->calculateMaintenanceIntervals($maintenanceRecords);
         $averageInterval = $intervals->avg() ?: 1000;
         
-        // Get days since last service
-        $lastService = $records->first();
+        // Get days since last maintenance service (not cleaning)
+        $lastMaintenanceService = $maintenanceRecords->first();
         $daysSinceLast = 365;
 
-        if ($lastService) {
-            $lastServiceDate = $lastService->Datereceived 
-                ?? $lastService->DateModify 
-                ?? $lastService->responseDate;
+        if ($lastMaintenanceService) {
+            $lastServiceDate = $lastMaintenanceService->Datereceived 
+                ?? $lastMaintenanceService->DateModify 
+                ?? $lastMaintenanceService->responseDate;
                 
             if ($lastServiceDate) {
                 try {
@@ -1504,16 +1510,18 @@ private function getVehicleHistory($vehicleNumber)
             }
         }
         
-        // Determine vehicle type based on usage patterns
-        $vehicleType = $this->determineVehicleType($records, $averageInterval);
+        // Determine vehicle type based on maintenance usage patterns
+        $vehicleType = $this->determineVehicleType($maintenanceRecords, $averageInterval);
         
         // Add advanced tire analysis
-        $advancedTireAnalysis = $this->getAdvancedTireAnalysis($records, $this->getCurrentMileage($records));
+        $advancedTireAnalysis = $this->getAdvancedTireAnalysis($allRecords, $this->getCurrentMileage($allRecords));
         
         return [
-            'total_services' => $records->count(),
-            'records' => $records,
-            'last_service' => $lastService,
+            'total_services' => $maintenanceRecords->count(), // FIXED: Count maintenance services only
+            'total_all_records' => $allRecords->count(),
+            'records' => $allRecords, // All records for display
+            'maintenance_records' => $maintenanceRecords,
+            'last_service' => $lastMaintenanceService,
             'average_interval' => round($averageInterval),
             'days_since_last' => $daysSinceLast,
             'vehicle_type' => $vehicleType,
@@ -1527,7 +1535,9 @@ private function getVehicleHistory($vehicleNumber)
         
         return [
             'total_services' => 0,
+            'total_all_records' => 0,
             'records' => collect([]),
+            'maintenance_records' => collect([]),
             'last_service' => null,
             'average_interval' => 1000,
             'days_since_last' => 365,
@@ -1647,6 +1657,7 @@ private function calculateServiceStatistics($records)
         'by_priority' => [],
         'by_status' => [],
         'by_year' => [],
+        'by_year_split' => [],
         'recent_activity' => []
     ];
     
@@ -1686,7 +1697,7 @@ private function calculateServiceStatistics($records)
     });
     
     // Group by year
-    $stats['by_year'] = $records->groupBy(function ($record) {
+    $yearlyData = $records->groupBy(function ($record) {
         try {
             if ($record->Datereceived) {
                 return Carbon::parse($record->Datereceived)->format('Y');
@@ -1695,8 +1706,31 @@ private function calculateServiceStatistics($records)
         } catch (\Exception $e) {
             return 'Unknown';
         }
-    })->map(function ($group) {
+    });
+    
+    // Simple year totals (existing functionality)
+    $stats['by_year'] = $yearlyData->map(function ($group) {
         return $group->count();
+    })->sortKeysDesc();
+    
+    // Detailed year split between maintenance and cleaning
+    $stats['by_year_split'] = $yearlyData->map(function ($group, $year) {
+        $maintenance = $group->filter(function ($record) {
+            return trim($record->MrType ?? '') !== '2'; // Not cleaning
+        })->count();
+        
+        $cleaning = $group->filter(function ($record) {
+            return trim($record->MrType ?? '') === '2'; // Cleaning only
+        })->count();
+        
+        return [
+            'year' => $year,
+            'maintenance' => $maintenance,
+            'cleaning' => $cleaning,
+            'total' => $group->count(),
+            'maintenance_percentage' => $group->count() > 0 ? round(($maintenance / $group->count()) * 100, 1) : 0,
+            'cleaning_percentage' => $group->count() > 0 ? round(($cleaning / $group->count()) * 100, 1) : 0
+        ];
     })->sortKeysDesc();
     
     return $stats;
@@ -1888,26 +1922,27 @@ private function processServiceHistory($records)
 /**
  * Calculate comprehensive service patterns
  */
-private function calculateServicePatterns($records)
+private function calculateServicePatterns($allRecords, $maintenanceRecords)
 {
-    $totalServices = $records->count();
+    $totalMaintenanceServices = $maintenanceRecords->count();
+    $totalAllServices = $allRecords->count();
     
-    if ($totalServices === 0) {
+    if ($totalMaintenanceServices === 0) {
         return $this->getDefaultServicePatterns();
     }
     
-    // Calculate service breakdown by type
+    // FIXED: Calculate service breakdown properly excluding cleaning from maintenance count
     $serviceBreakdown = [
-        'maintenance' => $records->where('MrType', '3')->count(),
-        'cleaning' => $records->where('MrType', '2')->count(),
-        'repairs' => $records->where('MrType', '1')->count(),
-        'tires' => $this->countTireServices($records),
-        'other' => $records->whereNotIn('MrType', ['1', '2', '3'])->count()
+        'maintenance' => $maintenanceRecords->where('MrType', '3')->count(),
+        'repairs' => $maintenanceRecords->where('MrType', '1')->count(),
+        'inspections' => $maintenanceRecords->where('MrType', '4')->count(),
+        'cleaning' => $allRecords->where('MrType', '2')->count(), // Show cleaning separately
+        'other' => $maintenanceRecords->whereNotIn('MrType', ['1', '3', '4'])->count()
     ];
     
-    // Calculate services per month
-    $oldestService = $records->last();
-    $newestService = $records->first();
+    // Calculate services per month based on maintenance records only
+    $oldestService = $maintenanceRecords->last();
+    $newestService = $maintenanceRecords->first();
     
     $monthsSpan = 1;
     if ($oldestService && $newestService && $oldestService->Datereceived && $newestService->Datereceived) {
@@ -1918,9 +1953,9 @@ private function calculateServicePatterns($records)
         }
     }
     
-    $servicesPerMonth = round($totalServices / $monthsSpan, 1);
+    $servicesPerMonth = round($totalMaintenanceServices / $monthsSpan, 1);
     
-    // Determine usage pattern
+    // Determine usage pattern based on maintenance frequency (not including cleaning)
     $usagePattern = 'Light';
     if ($servicesPerMonth > 10) {
         $usagePattern = 'Heavy Commercial';
@@ -1930,31 +1965,38 @@ private function calculateServicePatterns($records)
         $usagePattern = 'Regular';
     }
     
-    // Calculate data quality
-    $recordsWithMileage = $records->filter(function ($record) {
+    // Calculate data quality based on all records
+    $recordsWithMileage = $allRecords->filter(function ($record) {
         return $record->Odometer && is_numeric($record->Odometer) && floatval($record->Odometer) > 1000;
     })->count();
     
-    $dataQuality = $totalServices > 0 ? round(($recordsWithMileage / $totalServices) * 100) : 0;
+    $dataQuality = $totalAllServices > 0 ? round(($recordsWithMileage / $totalAllServices) * 100) : 0;
     
     return [
         'service_breakdown' => $serviceBreakdown,
-        'services_per_month' => $servicesPerMonth,
+        'services_per_month' => $servicesPerMonth, // Based on maintenance only
         'usage_pattern' => $usagePattern,
         'data_quality' => $dataQuality,
-        'months_span' => $monthsSpan
+        'months_span' => $monthsSpan,
+        'maintenance_vs_total' => [
+            'maintenance_count' => $totalMaintenanceServices,
+            'total_count' => $totalAllServices,
+            'cleaning_count' => $serviceBreakdown['cleaning']
+        ]
     ];
 }
 
 /**
- * Calculate intervals between services
+ * FIXED: Calculate intervals between maintenance services only (exclude cleaning)
  */
-private function calculateServiceIntervals($records)
+private function calculateMaintenanceIntervals($maintenanceRecords)
 {
     $intervals = collect([]);
     
-    $sortedRecords = $records->sortBy('Datereceived');
+    // Sort maintenance records by date
+    $sortedRecords = $maintenanceRecords->sortBy('Datereceived');
     
+    // Calculate interval between each consecutive maintenance service
     for ($i = 1; $i < $sortedRecords->count(); $i++) {
         $current = $sortedRecords->values()[$i];
         $previous = $sortedRecords->values()[$i - 1];
@@ -1963,9 +2005,12 @@ private function calculateServiceIntervals($records)
             $currentMileage = floatval($current->Odometer);
             $previousMileage = floatval($previous->Odometer);
             
+            // Only use reasonable values
             if ($currentMileage > $previousMileage && $currentMileage > 1000 && $previousMileage > 1000) {
                 $interval = $currentMileage - $previousMileage;
-                if ($interval > 0 && $interval < 100000) { // Reasonable interval
+                
+                // Filter out unrealistic intervals
+                if ($interval > 0 && $interval < 100000) {
                     $intervals->push($interval);
                 }
             }
@@ -2701,13 +2746,13 @@ private function getVehicleBasedReason($partName, $kmSinceService, $intervalKm)
     $percentageUsed = $intervalKm > 0 ? ($kmSinceService / $intervalKm) * 100 : 0;
     
     if ($percentageUsed >= 100) {
-        return "OVERDUE - Last serviced " . number_format($kmSinceService) . " KM ago";
+        return "OVERDUE";
     } elseif ($percentageUsed >= 90) {
-        return "Due soon - " . number_format($intervalKm - $kmSinceService) . " KM remaining";
+        return "Due soon";
     } elseif ($percentageUsed >= 75) {
         return "Monitor closely - Approaching service interval";
     } else {
-        return "Good condition - Regular " . number_format($intervalKm) . " KM interval";
+        return "Good condition";
     }
 }
 

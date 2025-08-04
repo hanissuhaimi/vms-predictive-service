@@ -42,167 +42,98 @@
                                 <input type="text" 
                                        class="form-control form-control-lg" 
                                        id="vehicle_number" 
-                                       name="vehicle_number" 
-                                       value="{{ old('vehicle_number') }}" 
-                                       placeholder=""
+                                       name="vehicle_number"
+                                       value="{{ old('vehicle_number') }}"
+                                       placeholder="Enter vehicle number (e.g., ABC1234)"
                                        required>
-                                <div class="form-text">Enter the vehicle's registration number</div>
+                                <div class="form-text">Enter the vehicle registration number</div>
                             </div>
-
+                            
                             <!-- Current Mileage Input -->
                             <div class="mb-4">
                                 <label for="current_mileage" class="form-label">
                                     <i class="fas fa-tachometer-alt"></i> Current Mileage (KM)
                                 </label>
                                 <input type="number" 
-                                    class="form-control form-control-lg @error('current_mileage') is-invalid @enderror" 
-                                    id="current_mileage" 
-                                    name="current_mileage" 
-                                    value="{{ old('current_mileage') }}" 
-                                    min="1" 
-                                    max="2000000"
-                                    placeholder="cd .."
-                                    required>
-                                
-                                @error('current_mileage')
-                                    <div class="invalid-feedback">
-                                        <strong>{{ $message }}</strong>
-                                    </div>
-                                @enderror
-                                
-                                <div class="form-text">
-                                    💡 Enter the current odometer reading from your vehicle dashboard
-                                </div>
-                                
-                                <!-- Helpful mileage guide -->
-                                {{-- <div class="mt-2">
-                                    <small class="text-muted">
-                                        <i class="fas fa-info-circle"></i> 
-                                        <strong>Vehicle Ranges:</strong> 
-                                        New (0-100K) | Active (100K-500K) | High-Usage (500K+)
-                                    </small>
-                                </div> --}}
+                                       class="form-control form-control-lg" 
+                                       id="current_mileage" 
+                                       name="current_mileage"
+                                       value="{{ old('current_mileage') }}"
+                                       placeholder="Enter current odometer reading"
+                                       min="1"
+                                       max="5000000"
+                                       required>
+                                <div class="form-text">Enter the current odometer reading in kilometers</div>
                             </div>
-
+                            
                             <!-- Submit Button -->
-                            <div class="text-center mb-4">
-                                <button type="submit" class="btn btn-primary btn-lg px-5">
-                                    <i class="fas fa-magic"></i> Analyze Vehicle
+                            <div class="d-grid gap-2 mb-4">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-search"></i> Predict Maintenance Schedule
                                 </button>
                             </div>
-
-                            @if ($errors->has('vehicle_number'))
-                                <div class="alert alert-danger">
-                                    <h5><i class="fas fa-exclamation-triangle"></i> Vehicle Not Found</h5>
-                                    <p>{{ $errors->first('vehicle_number') }}</p>
-                                    <p><strong>Suggestions:</strong></p>
-                                    <ul>
-                                        <li>Double-check the vehicle number spelling</li>
-                                        <li>Ensure the vehicle is registered in the vehicle management system</li>
-                                        <li>Contact the manager if vehicle should be in the system</li>
-                                    </ul>
-                                </div>
-                            @endif
-
-                            @if (session('error'))
-                                <div class="alert alert-warning">
-                                    <h5><i class="fas fa-info-circle"></i> Notice</h5>
-                                    <p>{{ session('error') }}</p>
-                                </div>
-                            @endif
                         </div>
                     </div>
                 </form>
-
-                <!-- Sample Vehicles -->
-                {{-- <div class="card mt-4">
-                    <div class="card-header">
-                        <h6><i class="fas fa-list"></i>Test Vehicles</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-4 mb-2">
-                                <button class="btn btn-outline-primary btn-sm w-100" 
-                                        onclick="fillSample('VEK4613', 95000)">
-                                    VEK4613 - 95,000 KM<br>
-                                    <small>733 service records</small>
-                                </button>
-                            </div>
-                            <div class="col-md-4 mb-2">
-                                <button class="btn btn-outline-secondary btn-sm w-100" 
-                                        onclick="fillSample('WSG7937', 950000)">
-                                    WSG7937 - 950,000 KM<br>
-                                    <small>1,337 service records</small>
-                                </button>
-                            </div>
-                            <div class="col-md-4 mb-2">
-                                <button class="btn btn-outline-success btn-sm w-100" 
-                                        onclick="fillSample('FLEET999', 50000)">
-                                    FLEET999 - 50,000 KM<br>
-                                    <small>Test unknown vehicle</small>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div> --}}
             </div>
         </div>
     </div>
 </div>
 
-<script>
-// Essential JavaScript functions
-function fillSample(vehicle, mileage) {
-    document.getElementById('vehicle_number').value = vehicle;
-    document.getElementById('current_mileage').value = mileage;
-}
+<!-- Fleet Analysis Section -->
+<div class="row justify-content-center mt-4">
+    <div class="col-lg-8">
+        <div class="card border-success">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-truck-moving"></i> Fleet Management Tools
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h6 class="card-title">Analyze All Vehicles</h6>
+                        <p class="card-text text-muted mb-2">
+                            Get comprehensive insights across your entire fleet including performance trends, 
+                            maintenance patterns, and cost analysis.
+                        </p>
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle"></i> 
+                            View fleet statistics, vehicle rankings, and predictive maintenance alerts
+                        </small>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <a href="{{ route('fleet.analysis.index') }}" class="btn btn-success btn-lg">
+                            <i class="fas fa-chart-line"></i> Fleet Analysis
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-// Add real-time validation feedback
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Vehicle prediction form loaded successfully');
-    
-    const mileageInput = document.getElementById('current_mileage');
-    if (mileageInput) {
-        mileageInput.addEventListener('input', function() {
-            const value = parseInt(this.value);
-            
-            if (value && value < 1000) {
-                this.classList.add('is-invalid');
-                this.classList.remove('is-valid');
-            } else if (value && value > 0) {
-                this.classList.remove('is-invalid');
-                this.classList.add('is-valid');
-            } else {
-                this.classList.remove('is-invalid', 'is-valid');
-            }
-        });
-    }
-});
-</script>
-
-<style>
-.is-valid {
-    border-color: #28a745 !important;
-}
-
-.is-invalid {
-    border-color: #dc3545 !important;
-}
-
-.form-control-lg {
-    font-size: 1.125rem;
-}
-
-@media (max-width: 768px) {
-    .btn-group {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-    
-    .btn-group .btn {
-        margin-right: 0;
-    }
-}
-</style>
+<!-- Quick Stats -->
+<div class="row justify-content-center mt-4">
+    <div class="col-lg-8">
+        <div class="card bg-light">
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <h4 class="text-primary">{{ \App\Models\FleetAnalysis::getTotalVehicles() }}</h4>
+                        <small class="text-muted">Total Vehicles in Fleet</small>
+                    </div>
+                    <div class="col-md-4">
+                        <h4 class="text-info">{{ number_format(\App\Models\FleetAnalysis::getTotalServices()) }}</h4>
+                        <small class="text-muted">Total Services Recorded</small>
+                    </div>
+                    <div class="col-md-4">
+                        <h4 class="text-success">{{ \App\Models\FleetAnalysis::calculateFleetHealthScore() }}%</h4>
+                        <small class="text-muted">Fleet Health Score</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
