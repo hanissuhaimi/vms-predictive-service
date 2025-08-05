@@ -383,7 +383,7 @@
                         <div class="total-cost-summary total-cost-immediate">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <h6 class="mb-0 text-danger">
-                                    <i class="fas fa-calculator"></i> Immediate Total Cost
+                                    <i class="fas fa-calculator"></i> Immediate Service Total Cost
                                 </h6>
                                 <span class="cost-highlight-total">RM {{ number_format($immediateMinTotal) }} - RM {{ number_format($immediateMaxTotal) }}</span>
                             </div>
@@ -397,7 +397,7 @@
                             
                             <div class="total-divider immediate-divider">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <strong class="text-danger">TOTAL IMMEDIATE:</strong>
+                                    <strong class="text-danger">TOTAL ESTIMATED IMMEDIATE SERVICE:</strong>
                                     <strong class="cost-highlight-total">RM {{ number_format($immediateMinTotal) }} - RM {{ number_format($immediateMaxTotal) }}</strong>
                                 </div>
                                 <small class="text-muted d-block mt-1">
@@ -527,7 +527,7 @@
                         <div class="total-cost-summary total-cost-soon">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <h6 class="mb-0 text-warning">
-                                    <i class="fas fa-calculator"></i> Soon Total Cost
+                                    <i class="fas fa-calculator"></i> Next Service Total Cost
                                 </h6>
                                 <span class="cost-highlight-total">RM {{ number_format($soonMinTotal) }} - RM {{ number_format($soonMaxTotal) }}</span>
                             </div>
@@ -541,7 +541,7 @@
                             
                             <div class="total-divider soon-divider">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <strong class="text-warning">TOTAL SOON:</strong>
+                                    <strong class="text-warning">TOTAL ESTIMATED NEXT SERVICE:</strong>
                                     <strong class="cost-highlight-total">RM {{ number_format($soonMinTotal) }} - RM {{ number_format($soonMaxTotal) }}</strong>
                                 </div>
                                 <small class="text-muted d-block mt-1">
@@ -565,11 +565,11 @@
                     <h5 class="mb-2">
                         <i class="fas fa-money-bill-wave"></i> Total Maintenance Budget Required
                     </h5>
-                    <p class="mb-0">Combined estimate for all immediate and soon maintenance items</p>
+                    <p class="mb-0">Combined estimate for all immediate and upcoming maintenance items</p>
                     <small class="text-muted">
                         • Immediate: RM {{ number_format($immediateMinTotal) }} - RM {{ number_format($immediateMaxTotal) }}
                         @if($soonMinTotal > 0)
-                        <br>• Soon: RM {{ number_format($soonMinTotal) }} - RM {{ number_format($soonMaxTotal) }}
+                        <br>• Upcoming: RM {{ number_format($soonMinTotal) }} - RM {{ number_format($soonMaxTotal) }}
                         @endif
                     </small>
                 </div>
@@ -579,11 +579,11 @@
                     </div>
                     <small class="text-muted d-block mt-1">
                         @if($immediateMinTotal > 0 && $soonMinTotal > 0)
-                            Immediate + Soon
+                            Immediate + Upcoming
                         @elseif($immediateMinTotal > 0)
                             Immediate Only
                         @else
-                            Soon Only
+                            Upcoming Only
                         @endif
                     </small>
                 </div>

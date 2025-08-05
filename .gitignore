@@ -76,3 +76,7 @@ yarn-error.log*
 # Don't commit sensitive ML model files
 /model_training_output/*.pkl
 /python/__pycache__/
+
+# csv files
+*.csv
+data/*.csv

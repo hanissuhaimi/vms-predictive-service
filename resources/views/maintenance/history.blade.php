@@ -114,164 +114,187 @@
     <div class="row mb-4">
         <!-- Service Types -->
         <div class="col-md-4 mb-3">
-            <div class="card h-100">
-                <div class="card-header">
-                    <h6><i class="fas fa-chart-pie"></i> Service Types</h6>
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-header bg-primary text-white py-2">
+                    <h6 class="mb-0 d-flex align-items-center">
+                        <i class="fas fa-chart-pie me-2"></i>
+                        <span>Service Types</span>
+                        <span class="badge bg-white text-primary ms-auto">{{ isset($serviceStats['by_type']) ? $serviceStats['by_type']->count() : 0 }}</span>
+                    </h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-3">
                     @if(isset($serviceStats['by_type']) && $serviceStats['by_type']->isNotEmpty())
                         @foreach($serviceStats['by_type'] as $type)
-                        <div class="mb-2">
-                            <div class="d-flex justify-content-between">
-                                <span>
-                                    {{ $type['name'] }}
-                                    @if($type['name'] == 'Cleaning/Washing')
-                                        {{-- <small class="text-muted">(excluded from intervals)</small> --}}
-                                    @endif
-                                </span>
-                                <span><strong>{{ $type['count'] }}</strong> ({{ $type['percentage'] }}%)</span>
-                            </div>
-                            <div class="progress" style="height: 8px;">
-                                <div class="progress-bar 
+                        <div class="service-item d-flex align-items-center justify-content-between py-2 mb-2 rounded">
+                            <div class="d-flex align-items-center flex-grow-1">
+                                <div class="service-indicator me-3
                                     @if($type['name'] == 'Repair') bg-danger
                                     @elseif($type['name'] == 'Maintenance') bg-success
                                     @elseif($type['name'] == 'Cleaning/Washing') bg-info
                                     @elseif($type['name'] == 'Inspection') bg-warning
-                                    @else bg-secondary @endif" 
-                                    style="width: {{ $type['percentage'] }}%"></div>
+                                    @else bg-secondary @endif">
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold text-dark">{{ $type['name'] }}</div>
+                                    <div class="progress mt-1" style="height: 4px;">
+                                        <div class="progress-bar 
+                                            @if($type['name'] == 'Repair') bg-danger
+                                            @elseif($type['name'] == 'Maintenance') bg-success
+                                            @elseif($type['name'] == 'Cleaning/Washing') bg-info
+                                            @elseif($type['name'] == 'Inspection') bg-warning
+                                            @else bg-secondary @endif" 
+                                            style="width: {{ $type['percentage'] }}%">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-end ms-3">
+                                <div class="fw-bold text-primary">{{ $type['count'] }}</div>
+                                <small class="text-muted">{{ $type['percentage'] }}%</small>
                             </div>
                         </div>
                         @endforeach
-                        {{-- Add maintenance analytics note --}}
-                        @if(isset($vehicleHistory['service_patterns']['maintenance_vs_total']))
-                        <div class="mt-3 p-2 bg-light rounded">
-                            <small class="text-muted">
-                                <i class="fas fa-calculator"></i> 
-                                <strong>Interval Calculation:</strong> Based on {{ $vehicleHistory['total_services'] ?? 0 }} maintenance services
-                                ({{ $vehicleHistory['service_patterns']['maintenance_vs_total']['cleaning_count'] ?? 0 }} cleaning services excluded)
-                            </small>
+                        
+                        <!-- Summary -->
+                        <div class="bg-light rounded p-2 mt-3 text-center">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="fw-bold text-success">{{ $vehicleHistory['total_services'] ?? 0 }}</div>
+                                    <small class="text-muted">Maintenance</small>
+                                </div>
+                                <div class="col-6">
+                                    <div class="fw-bold text-info">{{ $vehicleHistory['service_patterns']['maintenance_vs_total']['cleaning_count'] ?? 0 }}</div>
+                                    <small class="text-muted">Cleaning</small>
+                                </div>
+                            </div>
                         </div>
-                        @endif
                     @else
-                        <p class="text-muted">No service type data available</p>
+                        <div class="text-center py-4 text-muted">
+                            <i class="fas fa-chart-pie fa-2x mb-2"></i>
+                            <div>No service data available</div>
+                        </div>
                     @endif
                 </div>
             </div>
         </div>
 
-        <!-- Parts Analysis -->
+        <!-- Parts & Systems Card -->
         <div class="col-md-4 mb-3">
-            <div class="card h-100">
-                <div class="card-header">
-                    <h6><i class="fas fa-cog"></i> Parts & Systems</h6>
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-header bg-info text-white py-2">
+                    <h6 class="mb-0 d-flex align-items-center">
+                        <i class="fas fa-cog me-2"></i>
+                        <span>Parts & Systems</span>
+                        <span class="badge bg-white text-info ms-auto">{{ isset($partsAnalysis) ? count($partsAnalysis) : 0 }}</span>
+                    </h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-3">
                     @if(isset($partsAnalysis) && !empty($partsAnalysis))
                         @foreach(array_slice($partsAnalysis, 0, 6) as $partName => $data)
-                        <div class="mb-2">
-                            <div class="d-flex justify-content-between">
-                                <span class="small">{{ $partName }}</span>
-                                <span class="small"><strong>{{ $data['count'] }}</strong> ({{ $data['percentage'] }}%)</span>
+                        <div class="parts-item d-flex align-items-center justify-content-between py-2 mb-2 rounded">
+                            <div class="d-flex align-items-center flex-grow-1">
+                                <div class="parts-indicator bg-info me-3"></div>
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold text-dark">{{ $partName }}</div>
+                                    <div class="progress mt-1" style="height: 3px;">
+                                        <div class="progress-bar bg-info" style="width: {{ min(100, $data['percentage'] * 2) }}%"></div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="progress" style="height: 6px;">
-                                <div class="progress-bar bg-primary" style="width: {{ min(100, $data['percentage'] * 2) }}%"></div>
+                            <div class="text-end ms-3">
+                                <span class="badge bg-primary">{{ $data['count'] }}</span>
+                                <div><small class="text-muted">{{ $data['percentage'] }}%</small></div>
                             </div>
                         </div>
                         @endforeach
+                        
+                        <!-- Parts Summary -->
+                        <div class="bg-light rounded p-2 mt-3 text-center">
+                            <div class="fw-bold text-info">{{ count($partsAnalysis) }}</div>
+                            <small class="text-muted">Components Serviced</small>
+                        </div>
                     @else
-                        <p class="text-muted">No parts data available</p>
+                        <div class="text-center py-4 text-muted">
+                            <i class="fas fa-cog fa-2x mb-2"></i>
+                            <div>No parts data available</div>
+                        </div>
                     @endif
                 </div>
             </div>
         </div>
 
-        <!-- Yearly Trends -->
+        <!-- Yearly Costs Card -->
         <div class="col-md-4 mb-3">
-            <div class="card h-100">
-                <div class="card-header">
-                    <h6><i class="fas fa-chart-line"></i> Yearly Activity</h6>
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-header bg-success text-white py-2">
+                    <h6 class="mb-0 d-flex align-items-center">
+                        <i class="fas fa-chart-line me-2"></i>
+                        <span>Yearly Costs</span>
+                        <span class="badge bg-white text-success ms-auto">
+                            {{ isset($yearlyCosts) ? count($yearlyCosts) : 0 }}
+                        </span>
+                    </h6>
                 </div>
-                <div class="card-body">
-                    @if(isset($serviceStats['by_year_split']) && $serviceStats['by_year_split']->isNotEmpty())
-                        @foreach($serviceStats['by_year_split']->take(5) as $year => $data)
-                        <div class="mb-3">
+                <div class="card-body p-3">
+                    @if(isset($yearlyCosts) && !empty($yearlyCosts))
+                        @foreach(array_slice($yearlyCosts, 0, 4, true) as $year => $data)
+                        <div class="year-item bg-light rounded p-3 mb-2">
                             <!-- Year Header -->
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <strong>{{ $year }}</strong>
-                                <span class="badge bg-primary">{{ $data['total'] }} total</span>
-                            </div>
-                            
-                            <!-- Maintenance Bar -->
-                            <div class="mb-1">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <small class="text-success">
-                                        <i class="fas fa-wrench"></i> Maintenance
-                                    </small>
-                                    <small><strong>{{ $data['maintenance'] }}</strong> ({{ $data['maintenance_percentage'] }}%)</small>
-                                </div>
-                                <div class="progress" style="height: 6px;">
-                                    @php
-                                        $maxTotal = $serviceStats['by_year_split']->max('total');
-                                        $maintenanceWidth = $maxTotal > 0 ? ($data['maintenance'] / $maxTotal) * 100 : 0;
-                                    @endphp
-                                    <div class="progress-bar bg-success" style="width: {{ $maintenanceWidth }}%"></div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="fw-bold text-success">{{ $year }}</div>
+                                <div class="text-end">
+                                    <div class="text-success fw-bold small">({{ $data['total_cost']['formatted_min'] }} - {{ $data['total_cost']['formatted_max'] }})</div>
                                 </div>
                             </div>
                             
-                            <!-- Cleaning Bar -->
-                            <div class="mb-2">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <small class="text-info">
-                                        <i class="fas fa-spray-can"></i> Cleaning
-                                    </small>
-                                    <small><strong>{{ $data['cleaning'] }}</strong> ({{ $data['cleaning_percentage'] }}%)</small>
+                            <!-- Metrics -->
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <div class="fw-bold text-primary">{{ $data['service_counts']['maintenance'] }}</div>
+                                    <small class="text-muted">Services</small>
                                 </div>
-                                <div class="progress" style="height: 6px;">
-                                    @php
-                                        $cleaningWidth = $maxTotal > 0 ? ($data['cleaning'] / $maxTotal) * 100 : 0;
-                                    @endphp
-                                    <div class="progress-bar bg-info" style="width: {{ $cleaningWidth }}%"></div>
+                                <div class="col-4">
+                                    <div class="fw-bold text-warning">{{ $data['service_counts']['repairs'] }}</div>
+                                    <small class="text-muted">Repairs</small>
+                                </div>
+                                <div class="col-4">
+                                    <div class="fw-bold text-info">{{ $data['service_counts']['cleaning'] }}</div>
+                                    <small class="text-muted">Cleaning</small>
                                 </div>
                             </div>
+                            
+                            <!-- Average Cost -->
+                            @if($data['service_counts']['maintenance'] > 0)
+                            <div class="text-center mt-2">
+                                <div class="bg-white rounded px-2 py-1">
+                                    <small class="text-muted">
+                                        Average: <span class="fw-bold">RM {{ number_format($data['average_cost_per_service']['min']) }} - {{ number_format($data['average_cost_per_service']['max']) }}</span>
+                                    </small>
+                                </div>
+                            </div>
+                            @endif
                         </div>
                         @endforeach
                         
-                        <!-- Summary Analytics -->
+                        <!-- Total Summary -->
                         @php
-                            $totalMaintenance = $serviceStats['by_year_split']->sum('maintenance');
-                            $totalCleaning = $serviceStats['by_year_split']->sum('cleaning');
-                            $grandTotal = $totalMaintenance + $totalCleaning;
+                        $totalCostMin = array_sum(array_column(array_column($yearlyCosts, 'total_cost'), 'min'));
+                        $totalCostMax = array_sum(array_column(array_column($yearlyCosts, 'total_cost'), 'max'));
+                        $totalServices = array_sum(array_column(array_column($yearlyCosts, 'service_counts'), 'maintenance'));
                         @endphp
                         
-                        @if($grandTotal > 0)
-                        <div class="mt-3 p-2 bg-light rounded">
-                            <small class="text-muted">
-                                <strong>Overall Split:</strong><br>
-                                🔧 {{ round(($totalMaintenance / $grandTotal) * 100, 1) }}% Maintenance<br>
-                                🧽 {{ round(($totalCleaning / $grandTotal) * 100, 1) }}% Cleaning
-                            </small>
+                        @if($totalServices > 0)
+                        <div class="bg-success text-white rounded p-3 text-center">
+                            <div class="fw-bold">RM {{ number_format($totalCostMin) }} - {{ number_format($totalCostMax) }}</div>
+                            <small>Total Historical Cost ({{ $totalServices }} services)</small>
                         </div>
                         @endif
                         
-                    @elseif(isset($serviceStats['by_year']) && $serviceStats['by_year']->isNotEmpty())
-                        {{-- Fallback to simple yearly data if split data not available --}}
-                        @foreach($serviceStats['by_year']->take(5) as $year => $count)
-                        <div class="mb-2">
-                            <div class="d-flex justify-content-between">
-                                <span>{{ $year }}</span>
-                                <span><strong>{{ $count }}</strong> services</span>
-                            </div>
-                            <div class="progress" style="height: 8px;">
-                                @php
-                                    $maxCount = $serviceStats['by_year']->max();
-                                    $percentage = $maxCount > 0 ? ($count / $maxCount) * 100 : 0;
-                                @endphp
-                                <div class="progress-bar bg-info" style="width: {{ $percentage }}%"></div>
-                            </div>
-                        </div>
-                        @endforeach
                     @else
-                        <p class="text-muted">No yearly data available</p>
+                        <div class="text-center py-4 text-muted">
+                            <i class="fas fa-chart-line fa-2x mb-2"></i>
+                            <div>No yearly data available</div>
+                        </div>
                     @endif
                 </div>
             </div>
@@ -637,6 +660,181 @@ function showFullDescription(recordId) {
         border: none !important;
         box-shadow: none !important;
     }
+}
+
+/* Card Base */
+.card {
+    transition: all 0.2s ease;
+    border-radius: 8px !important;
+}
+
+.card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+}
+
+.card-header {
+    border-radius: 8px 8px 0 0 !important;
+    border-bottom: none;
+}
+
+/* Service Items */
+.service-item {
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.service-item:hover {
+    background-color: rgba(0,123,255,0.05);
+    border-color: rgba(0,123,255,0.1);
+}
+
+/* Service Indicator (colored circles) */
+.service-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* Parts Items */
+.parts-item {
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.parts-item:hover {
+    background-color: rgba(23,162,184,0.05);
+    border-color: rgba(23,162,184,0.1);
+}
+
+/* Parts Indicator */
+.parts-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* Year Items */
+.year-item {
+    transition: all 0.2s ease;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+.year-item:hover {
+    border-color: #28a745;
+    box-shadow: 0 2px 8px rgba(40,167,69,0.1);
+}
+
+/* Typography */
+.fw-semibold {
+    font-weight: 600;
+}
+
+/* Progress Bars */
+.progress {
+    background-color: rgba(0,0,0,0.08);
+    border-radius: 2px;
+}
+
+.progress-bar {
+    border-radius: 2px;
+}
+
+/* Badges */
+.badge {
+    font-size: 0.75rem;
+    padding: 0.35em 0.65em;
+}
+
+/* Empty State Icons */
+.fa-2x {
+    opacity: 0.5;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem !important;
+    }
+    
+    .service-item,
+    .parts-item {
+        padding: 0.75rem !important;
+    }
+    
+    .year-item {
+        padding: 1rem !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .service-indicator,
+    .parts-indicator {
+        width: 10px;
+        height: 10px;
+    }
+}
+
+/* Text Utilities */
+.text-muted {
+    color: #6c757d !important;
+}
+
+/* Background Utilities */
+.bg-light {
+    background-color: #f8f9fa !important;
+}
+
+/* Hover Effects */
+.service-item:hover .service-indicator,
+.parts-item:hover .parts-indicator {
+    transform: scale(1.2);
+    transition: transform 0.2s ease;
+}
+
+/* Card Content Max Height for Scrolling */
+.card-body {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* Custom Scrollbar */
+.card-body::-webkit-scrollbar {
+    width: 4px;
+}
+
+.card-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 2px;
+}
+
+.card-body::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 2px;
+}
+
+.card-body::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Clean Spacing */
+.mb-2 {
+    margin-bottom: 0.5rem !important;
+}
+
+.mb-3 {
+    margin-bottom: 1rem !important;
+}
+
+.py-2 {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+}
+
+.px-2 {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
 }
 </style>
 

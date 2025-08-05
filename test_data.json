@@ -1,0 +1,11 @@
+{
+  "Vehicle": "WUJ7742",
+  "Odometer": 250000,
+  "Priority": 2,
+  "Status": 2,
+  "MrType": 3,
+  "service_count": 150,
+  "average_interval": 8000,
+  "days_since_last": 45,
+  "Description": "Vehicle maintenance prediction"
+}

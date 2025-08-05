@@ -1,0 +1,4 @@
+ID	Description	CountDay
+1	High	0
+2	Medium	1
+3	Low	2
