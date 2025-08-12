@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\VMSPredictionService;
 use App\Models\ServiceRequest;
+use App\Models\VehicleProfile;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
@@ -80,16 +81,35 @@ class PredictionController extends Controller
             // Continue with enhanced prediction logic
             $startTime = microtime(true);
 
-            $vehicleHistory = $this->getVehicleHistory($vehicleNumber);
+            $vehicleProfile = VehicleProfile::where('vh_regno', $vehicleNumber)
+                ->where('Status', 1) // Only active vehicles
+                ->first();
 
-            // Check if vehicle exists
-            if ($vehicleHistory['total_services'] === 0) {
-                Log::warning("Vehicle {$vehicleNumber} not found in database");
+            if (!$vehicleProfile) {
+                Log::warning("Vehicle {$vehicleNumber} not found or not active");
                 
                 return back()
                     ->withInput()
-                    ->withErrors(['vehicle_number' => "Vehicle number '{$vehicleNumber}' not found in our database."])
-                    ->with('error', "No maintenance records found for vehicle {$vehicleNumber}. Please verify the vehicle number.");
+                    ->withErrors(['vehicle_number' => "Vehicle '{$vehicleNumber}' not found or not active in the system."])
+                    ->with('error', "Vehicle {$vehicleNumber} is not found, not active, or is under maintenance.");
+            }
+
+            Log::info("✅ Vehicle profile found", [
+                'depot' => $vehicleProfile->depot_description,
+                'staff' => $vehicleProfile->staff_nama1,
+                'cost_center' => $vehicleProfile->cc_desc
+            ]);
+
+            $vehicleHistory = $this->getVehicleHistory($vehicleNumber);
+
+            // Check if vehicle has service records
+            if ($vehicleHistory['total_services'] === 0) {
+                Log::warning("Vehicle {$vehicleNumber} has no service records");
+                
+                return back()
+                    ->withInput()
+                    ->withErrors(['vehicle_number' => "No service records found for vehicle '{$vehicleNumber}'."])
+                    ->with('error', "No maintenance records found for vehicle {$vehicleNumber}.");
             }
 
             Log::info("✅ Vehicle found: " . $vehicleHistory['total_services'] . " service records");
@@ -1450,11 +1470,14 @@ private function getVehicleHistory($vehicleNumber)
         
         // Get all service records for this vehicle
         $allRecords = ServiceRequest::whereRaw('UPPER(TRIM(Vehicle)) = ?', [strtoupper(trim($vehicleNumber))])
+            ->whereHas('vehicleProfile', function($q) {
+                $q->where('Status', 1); // Only active vehicles
+            })
             ->where(function($query) {
                 $query->whereNotNull('Datereceived')
-                      ->orWhereNotNull('DateModify')
-                      ->orWhereNotNull('responseDate')
-                      ->orWhere('ID', '>', 0);
+                    ->orWhereNotNull('DateModify')
+                    ->orWhereNotNull('responseDate')
+                    ->orWhere('ID', '>', 0);
             })
             ->orderBy(function($query) {
                 return $query->selectRaw('COALESCE(Datereceived, DateModify, responseDate, getdate())');

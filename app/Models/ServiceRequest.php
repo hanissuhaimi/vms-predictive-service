@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\VehicleProfile;
 
 class ServiceRequest extends Model
 {
@@ -145,5 +146,44 @@ class ServiceRequest extends Model
     public function scopeRecent($query, $days = 30)
     {
         return $query->where('Datereceived', '>=', now()->subDays($days));
+    }
+
+    // Relationship with VehicleProfile
+    public function vehicleProfile()
+    {
+        return $this->belongsTo(VehicleProfile::class, 'Vehicle', 'vh_regno');
+    }
+
+    // Scope for MO Created status only
+    public function scopeMoCreated($query)
+    {
+        return $query->where('Status', 2);
+    }
+
+    // Scope for active vehicles only
+    public function scopeActiveVehiclesOnly($query)
+    {
+        return $query->whereHas('vehicleProfile', function($q) {
+            $q->where('Status', 1);
+        });
+    }
+
+    // Scope for vehicles not under maintenance
+    public function scopeNotUnderMaintenance($query)
+    {
+        return $query->whereHas('vehicleProfile', function($q) {
+            $q->where(function($subQ) {
+                $subQ->where('UnderMaintenance', '!=', 1)
+                    ->orWhereNull('UnderMaintenance');
+            });
+        });
+    }
+
+    // Combined scope for your requirements
+    public function scopeFilteredData($query)
+    {
+        return $query->moCreated()
+                    ->activeVehiclesOnly()
+                    ->notUnderMaintenance();
     }
 }
