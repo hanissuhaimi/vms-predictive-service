@@ -1,3 +1,5 @@
+# Laravel .htaccess with Fleet Analysis Support
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
@@ -9,10 +11,6 @@
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
-    # Handle X-XSRF-Token Header
-    RewriteCond %{HTTP:x-xsrf-token} .
-    RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
-
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} (.+)/$
@@ -22,4 +20,60 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+</IfModule>
+
+# Special configuration for analytics routes
+<If "%{REQUEST_URI} =~ m#analytics#">
+    # PHP execution settings for large dataset processing
+    php_value max_execution_time 0
+    php_value max_input_time 600
+    php_value memory_limit 2048M
+    php_value post_max_size 100M
+    php_value upload_max_filesize 100M
+    
+    # Prevent script timeout
+    php_value default_socket_timeout 600
+    php_value mysql.connect_timeout 600
+    
+    # Output buffer settings
+    php_value output_buffering Off
+    php_value implicit_flush On
+</If>
+
+# FastCGI timeout settings (for servers using FastCGI)
+<IfModule mod_fcgid.c>
+    # Increase timeouts for analytics processing
+    <If "%{REQUEST_URI} =~ m#analytics#">
+        FcgidIOTimeout 600
+        FcgidConnectTimeout 600
+        FcgidBusyTimeout 600
+        FcgidIdleTimeout 600
+        FcgidMaxRequestLen 10485760
+    </If>
+</IfModule>
+
+# Apache timeout settings
+<IfModule mod_reqtimeout.c>
+    # Allow longer request timeouts for analytics
+    <If "%{REQUEST_URI} =~ m#analytics#">
+        RequestReadTimeout header=600,body=600
+    </If>
+</IfModule>
+
+# Security Headers (keep your existing security)
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # For analytics processing, allow longer connection times
+    <If "%{REQUEST_URI} =~ m#analytics#">
+        Header set Keep-Alive "timeout=600, max=1000"
+        Header set Connection "keep-alive"
+    </If>
+</IfModule>
+
+# Compression (optional, can help with large responses)
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
 </IfModule>

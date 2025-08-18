@@ -1,23 +1,5 @@
-Phase 1: Normal Operations
-1. VEK4613 + 631,852 KM     # Standard routine maintenance
-2. WSG7937 + 1,623,884 KM   # High mileage routine  
-3. WRH311 + 1,901,136 KM    # Ultra-high mileage routine
-4. WB9834E + 725,237 KM     # Active vehicle routine
-
-Phase 2: Service Due Scenarios
-5. VEK4613 + 641,852 KM     # Multiple services due
-6. WSG7937 + 1,638,884 KM   # Major service interval
-7. WRH311 + 1,921,136 KM    # Comprehensive maintenance
-8. WB9834E + 740,237 KM     # Tire-focused services
-
-Phase 3: Critical/Overdue Testing
-9. WSG7937 + 1,653,884 KM   # Critical high-mileage alerts
-10. WRH311 + 1,941,136 KM   # Emergency service level
-11. VEK4613 + 651,852 KM    # Overdue multiple systems
-12. WB9834E + 755,237 KM    # High-frequency vehicle overdue
-
-Phase 4: Validation Testing
-13. VEK4613 + 615,852 KM    # Backward mileage (-6K)
-14. WSG7937 + 1,608,884 KM  # High-mileage regression (-5K)
-15. WRH311 + 1,886,136 KM   # Ultra-high regression (-5K)
-16. WB9834E + 710,237 KM    # Active vehicle regression (-5K)
+1. WA3576E - 798,904
+2. VDL5682 - 426,412
+3. WA5263E - 943,716
+4. VHF5540 - 506,065
+5. VKR7342 - 189,031

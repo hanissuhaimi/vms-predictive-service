@@ -1,0 +1,181 @@
+UID	FirstName	LastName	NRIC	Address1	Address2	Postcode	City	State	Country	Telephone	Extension	Fax	MobilePhone	Designation	HourRate	DateCreated	COID	Company	StaffNo	Department	Qualification	DateJoined	HOD	PrevCompany	Status	DateResign	Active	Email1	Email2	StatusEIS	rolecode
+1700730	Mohd Zulhilmi	Azman	870919-06-5483					12	my					13		11/16/2018	40910	NULL	NULL	NULL		NULL	NULL	NULL		NULL	NULL	NULL	NULL	OK	NULL
+1701049	Mohd Razali	Bin Husin	1701049					9	my							2/19/2019	40500	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+1701240	Nordiana Fazleen	Fauzeli	9.10802E+11				0	5	my		202		182808617		0	10/17/2017	40100	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	nordiana.f@feldaglobal.com	NULL	OK	NULL
+1701242	Mohd Izzuan	Aziz	9.30902E+11					8	my							2/8/2019	40600	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+abidin.l	Abidin	Latuo	690410-12-5705					12	my					4	0	7/30/2007	40910	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NO	2
+admin	Administrator	Prodata	1				0	0						17	0	12/30/2004	40100	NULL	NULL	NULL			ADMIN	NULL		NULL	NULL			OK	1
+admin.pg	admin	pgudang	1					9	my					17	0	6/21/2007	40500	NULL	NULL	NULL			ADMIN	NULL	1	NULL	NULL	nurjehan.a@feldaglobal.com		OK	2
+admin.pk	admin	port klang	-					0						17	0	9/17/2007	40200	NULL	NULL	NULL			ADMIN	NULL		NULL	NULL	nurjehan.a@feldaglobal.com		OK	2
+admin.shahalam	Administrator	Shah Alam	12													2/26/2018	44213	NULL	NULL	NULL		NULL	NULL	NULL		NULL	NULL	NULL	NULL	NULL	NULL
+adminktn	Administrator	Prodata	-				0	0						17	0	5/20/2007	40600	NULL	NULL	NULL			ADMIN	NULL		NULL	NULL	nurjehan.a@feldaglobal.com		OK	2
+adminprodata.btw	admin	prodata	0	"Lot 272/2 Jalan Perak 2,"		13700		14	my					17		12/11/2012	40800	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	OK	NULL
+adminprodata.hq	admin	Prodata HQ	0					1	my					17	0	12/11/2012	40100	NULL	NULL	NULL			NULL	NULL	4	NULL	NULL			OK	NULL
+adminprodata.ipoh	Admin Ipoh	Admin Ipoh	0													4/11/2018	44211	NULL	NULL	NULL		NULL	NULL	NULL		NULL	NULL	NULL	NULL	OK	NULL
+adminprodata.kb	Admin Kota Bharu	Admin Kota Bharu	0	0	0	0		6	my	0	0	0	0			11/4/2018	44212	NULL	NULL	NULL		NULL	NULL	NULL		NULL	NULL	NULL	NULL	OK	NULL
+adminprodata.ktn	admin	Prodata Kuantan	0	"Lot 67, Kawasan Perindustrian Gebeng,"		26080		8	my					17	0	12/11/2012	40600	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	NULL
+adminprodata.pg	admin	Prodata PGudang	0	"Lot 272/2 Jalan Perak 2,"		81700		9	my					17	0	12/11/2012	40500	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	NULL
+adminprodata.pk	Admin	Prodata P Klang	0	"Lot 1638, Lebuh Raja Lumu,"		42000		2	my					17	0	12/11/2012	40200	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	NULL
+adminprodata.shbt	admin	Prodata Sahabat	0	"Felda Transport Services Sdn Bhd,"	"Bandar Sahabat, Kompleks Felda,"	91100		12	my					17	0	12/11/2012	40910	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			OK	NULL
+adminprodata.srt	Admin Serting	Admin Serting	0	0	0	0		11	my	0	0	0	0			11/4/2018	40300	NULL	NULL	NULL		NULL	NULL	NULL		NULL	NULL	NULL	NULL	OK	NULL
+adminprodata.twu	admin	Prodata Tawau	0					12	my					17	0	12/11/2012	40940	NULL	NULL	NULL			NULL	NULL	4	NULL	NULL			OK	NULL
+adnan.hq	adnan	nor	6.80405E+11					2	my					2		3/14/2018	40100	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+adnan.n	Adnan	Nor	680405-06-5411					0						2	0	4/20/2009	44213	NULL	NULL	NULL			NULL	NULL		NULL	NULL			NULL	2
+affandi.a	Nor Affandi	Abdull	-					13	my					61	0	8/23/2013	41000	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			OK	NULL
+afzainizam.a	sardi	nordin	861119-49-5915				0	12	my					4	0	12/12/2011	40910	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL		NULL	NULL	NULL
+ahmad.ha	Ahmad	Hamdan	-					13	my					4	0	8/23/2013	41000	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	NULL
+ain.e	Nor Ain	Embong	890829-11-5158	Gebeng				0						5	0	4/12/2013	40600	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	NULL
+ain_temerloh	Nor Ain	Embong	9.09091E+11					8	my					5		4/3/2017	44206	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+aishah.aw	Siti Aisyah	Abdul Wahab	-				25	0						4	0	8/25/2013	41000	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	NULL
+alhafiz.cm	Muhamad Al Hafiz	Che Mat	8426654123					1	my					5		6/5/2018	40100	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+ambok.mb	Ambok Dalle	Mohd Buang	8.82183E+12					9						53		10/30/2015	40500	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+aminuddin.a	Mohd Aminuddin	Mohd Arof	580414-06-5255				0	8	my	09-5838252			014-8366917	2	0	11/8/2005	40600	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	2
+amir.a	Amir Ariff	Kassim	0					2	my					53		4/13/2017	40200	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+amirulhafizh.ah	Md Amirul Hafizh	Amin Husaimi	89898988989					2	my					52		1/6/2016	40200	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+anizan	Anizan	Wan Ramli	-					1	my					10	0	7/30/2013	40500	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			OK	NULL
+anizan_tmlh	Anizan	Wan Ramli	-					8	my					60	0	3/15/2017	40500	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			OK	NULL
+annuar.a	annuar	abd aziz	0					9	my	019-833 7870				43		11/6/2012	40500	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	OK	NULL
+aqbal	Mohamad Aqbal	Salim	11											40		8/17/2011	40600	NULL	NULL	NULL		NULL	NULL	NULL		NULL	NULL	NULL	NULL	NULL	NULL
+asri.ch	Muhammad Asri	Che Ahamad	8.50116E+11	"No. 32, Lorong IM 6/8"	Indera Mahkota 6	25200	0	8	my				194467060	14	0	7/22/2008	40600	NULL	NULL	NULL	Bachelor Degree Of Mechanical		NULL	NULL	1	NULL	NULL	asri.ch@feldaglobal.com		OK	2
+azhar.ma	Azhar	Mahmud	-					0						12	0	5/13/2008	40100	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	2
+azizi.s	Muhammad Azizi	Sukri	9.10605E+11	No 34 Jalan Wangsa Perkasa 7	Wangsa Melawati	53300	0	1	my	013 275 8395	106		013 275 8395	60	0	6/7/2016	40100	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	azizi.s@feldaglobal.com	NULL	NULL	NULL
+azmi.s	Azmi	Saat	-	Felda Transport Services Sdn. Bhd.		54000	1	1	my	326930088	120	326914829	193533964	63	0	5/13/2008	40100	NULL	NULL	NULL			NULL	NULL		NULL	NULL	azmi.s@feldaglobal.com		NULL	2
+azwin.s	Mohd Azwin	Sundu	0					12	my					52	0	7/14/2014	40910	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	NULL
+azzuan.s	Azzuan	Surian Shah	11					0						61	0	1/5/2009	40940	NULL	NULL	NULL			NULL	NULL		NULL	NULL			OK	2
+bahari.s	bahari	Salihien	620416-12-5235					12	my					42	0	11/8/2012	40910	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL	bahari.s@feldaglobal.com		OK	NULL
+bakri.a	Bakri	Atil	11					0						53	0	5/20/2010	40910	NULL	NULL	NULL			NULL	NULL		NULL	NULL			NULL	NULL
+datinnor.s	Saidatinnor	Said	641209-08-5026				0	0						5	0	12/7/2005	40500	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	2
+elmi.v	Elmi	Venancio	10101010101					12	my					53		4/10/2015	40910	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+eyjan	Ruhaizan	Abd Razak	-					0						63	0	9/12/2007	40200	NULL	NULL	NULL			NULL	NULL		NULL	NULL			NULL	2
+ezwan.m	Mohd Ezwan	Mazlan	-	-	-	-		9	my	-	-	-	-	4		3/31/2010	40500	NULL	NULL	NULL	-	NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+faisal.i	Mohamad Faisal	Ismail	800303-08-5933					1	my					10	0	7/30/2007	40100	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	2
+faisal.mj	Shamsul Faisal	Mat Jini	11				0	0						45	0	1/6/2009	40600	NULL	NULL	NULL			NULL	NULL		NULL	NULL			OK	2
+faizol.em	Mohd Faizol	Edy Al-Azhar	-					0						6	0	12/14/2010	40500	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	NULL
+faizol.j	Mohd Faizol	Jaafar	-					0						38	0	9/12/2007	40100	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			OK	7
+fakhrullah.i	Muhammad Fakhrullah Ishar	Mohd Isa	8.77879E+11					8	my					7		8/4/2016	40600	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+fakrullah	Muhammad Fakrullah Ishar	Mohd Isa	11											4		8/17/2011	40600	NULL	NULL	NULL		NULL	NULL	NULL		NULL	NULL	NULL	NULL	NULL	NULL
+farid	Mohammad Fairdh	Bin M.Bahri	8.50423E+11	120 jalan seraya 86810 felda tenggaroh 01 mersing	"no 6 , jalan kenari 4 , taman scientex , pg"	86810	27	9	my	72511256	20	72513832	197504737	4	3.36	1/3/2006	40500	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	2
+fatin.n	Fatin Nadia	Dzulkifli	88889999989					2	my					3	0	6/23/2016	40200	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	NULL
+hafiz.z	Mohd Hafizuddin	Zamri	11					0						7	0	9/19/2011	40600	NULL	NULL	NULL			NULL	NULL		NULL	NULL			NULL	NULL
+haizal.uas	Wan Haizal Hakimi	Umar Ali Saifuddin	8.50324E+11				0	1	my					45	0	12/5/2012	40100	NULL	NULL	NULL	Degree	NULL	NULL	NULL	1	NULL	NULL		NULL	NULL	NULL
+hanafi.mw	Hanafi	MW	781219-14-5541					8	my					42		9/12/2012	40600	NULL	NULL	NULL	Degree	NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	OK	NULL
+hanafiah.h	Ahmad Hanafiah	Hussin	6.768E+12					2	my					64		8/2/2016	40200	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+hasalaan	Mohd Hasalaan	Mat Nasir	790209- 06- 5307					8	my					7	0	10/5/2011	40600	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			OK	NULL
+hasani.j	Hasani	Jaafar	7.40326E+11					6	my					53		4/9/2018	44212	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+hasbullah.pg	Hasbullah	Hussien	-					9	my	-				4		10/16/2009	40500	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	2
+haslina	Haslina	Ismail	640603-04-5116				0	10	my					39	0	12/7/2005	40500	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			OK	2
+hassan	Hassan	Kamarudin	-					0						5	0	9/12/2007	40200	NULL	NULL	NULL			NULL	NULL		NULL	NULL			NULL	2
+hassan.t	Hassan	Tamin	-					0						4	0	4/17/2007	40500	NULL	NULL	NULL			NULL	NULL		NULL	NULL			NULL	2
+hazifizi.h	Hazifizi	Hazizi	8.60915E+11				0	2	my	03-3166 2991			012-2280244	60	0	9/14/2015	40200	NULL	NULL	NULL		NULL	NULL	NULL		NULL	NULL	hazifizi.h@feldaglobal.com	NULL	OK	NULL
+haziq.s	Mohamad Haziq Syafiq	Othman	930830-01-6767					9	my					65		10/4/2018	40500	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+herman.md	Mohd Herman	Md	8.01245E+11					3	my					53		4/9/2018	44211	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+husni	husni	salleh	6.20102E+11					14	my					56	0	2/3/2012	40800	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			OK	NULL
+isa.h	Mohamad Isa	Hassan	8899898989					9	my					7	0	1/5/2016	40500	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	NULL
+izzuddin.i	Mohd Izzuddin	Ishak	910930-06-6069				0	8	my					7	0	2/15/2016	40600	NULL	NULL	NULL			NULL	NULL	3	NULL	NULL			NULL	NULL
+jabudi.saidi	jabudi	Saidi	761003-03-5169				58	6						8	0	2/13/2012	44213	NULL	NULL	NULL			NULL	NULL		NULL	NULL			NULL	NULL
+jaitullah	Jaitullah	Panggagah	730325-12-6037					12	my					4	0	7/30/2007	40910	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	2
+jamaluddin.j	jamaluddin	jaafar	-					9	my				019-736 2147	13	0	6/24/2013	40500	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			OK	NULL
+jamaludin.k	Jamaludin	Khalid	630117-05-5483					8	my					40	0	11/8/2005	40600	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			OK	2
+jamilah	Jamilah	Mahyuddin	11					0						3	0	7/26/2011	40100	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	NULL
+jamli	Muhammad Jamli	Salehudin	7.40523E+11					8	my					4		1/25/2017	40620	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+jehan	jehan	test	-					0						28	0	12/21/2006	41000	NULL	NULL	NULL			ADMIN	NULL	1	NULL	NULL			NULL	2
+jumaah	jumaah	saad	10101011010					2	my					38		5/13/2013	40100	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	OK	NULL
+jumadi.i	Jumadi	Iskandar	8585858855					12	my					6		6/9/2016	40940	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+junaini.a	Junaini	Apdal	11					0						7	0	1/2/2009	40910	NULL	NULL	NULL			NULL	NULL		NULL	NULL			NULL	2
+jusli	Jusli	Tiru	811020-12-5599					12	my					5	0	7/30/2007	40910	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	2
+kahar.m	kahar	masari	860413-12-5451					12	my					6	0	12/12/2011	40910	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	NULL
+kamarulbahri.mr	Wan Kamarulbahri	Wan Roslan	8.41121E+11					8	my					13	0	5/17/2012	40600	NULL	NULL	NULL	Degree Of Public Management		NULL	NULL	1	NULL	NULL	kamarulbahri.mr@feldaglobal.com		NULL	NULL
+kassim.s	Kassim	Samin	610512-01-5117					0						46	0	4/12/2007	40100	NULL	NULL	NULL			NULL	NULL		NULL	NULL			NULL	2
+khairi	khairi kamaruddin	kamaruddin	-	no 7 lorong 35	sungai isap perdana	25150	30	8	my	95366156		958389286		4	0	8/4/2011	40600	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	khairi.kamaruddin@felda.net.my	NULL	NULL	NULL
+khairi.k	Khairi	Khalit	123456					8	my					5	0	6/4/2008	40600	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	2
+khairol.a	Khairol	Anuar	6.10916E+11					8	my					37	0	11/15/2005	40600	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			OK	2
+khairon.s	Khairon Shah	Johari	740103-01-5541				0	2	my	331662991			193516669	14	0	9/20/2012	40100	NULL	NULL	NULL	Degree In Accounting		NULL	NULL	1	NULL	NULL			OK	NULL
+khairuddin.l	Mohd Khairuddin	Lamarupo	1010101010					12	my					6		4/10/2015	40910	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+khairul.a	khairul aizam	khalim bashah	8.65656E+11													12/27/2017	44213	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+khairul.az	Khairul Amri	Zali	8.60714E+11			81750	28	9	my					4	0	3/8/2011	40500	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	NULL
+khalil.k	khalil	kasim	6.40213E+11					1	my					14		12/12/2012	40100	NULL	NULL	NULL	Ijazah	NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	OK	NULL
+khamis.s	Khamis	Sakah	650923-12-5093				0	12	my	019-8830510			019-8830510	5	0	7/30/2007	40910	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	2
+latifah.l	Latifah	Haji Lokman	6.51231E+11	Felda Transport Services Sdn Bhd	Komplek Pejabat Felda Wilayah Raja Alias	72120	0	11	my	06-4584900		06-4584589	013-3824407	53	0	4/9/2018	40300	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	latifah.l@feldaglobal.com	NULL	NULL	NULL
+m.isa	Mohd Isa	Hassan	5.9052E+11				0	8	my					53	0	1/20/2006	40600	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NO	2
+m.salim	Mohd Salim	Miswan	8.11025E+11	NO 179 Jalan Bahagia	Kampung  Pasir Putih	81700	32	9	my				012-7551545	6	0	1/3/2006	40500	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	salim.miswan@felda.net.my	NULL	OK	2
+madam	madam	othman	640607-01-5475				0	9	my					53	10	12/31/2009	40500	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	NULL
+magribi.h	Magribi	Husin	-					8	my					6	0	1/16/2014	40600	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	NULL
+mansor.a	mansor	abdullah	101100101					8	my							1/13/2015	40600	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+mansor_tmlh	Mansor	ABdullah	-					8	my					2	0	3/15/2017	40620	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	NULL
+mariniwati.mr	Dashboard	Prodata	-													2/19/2009	40100	NULL	NULL	NULL		NULL	NULL	NULL		NULL	NULL	NULL	NULL	NO	2
+mashitah	Mashitah	Jaamat	5.90729E+11					9	my					57	0	1/3/2006	40500	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	2
+masram.r	Masram	Rani	7.88788E+11					9	my					68	0	6/27/2016	40500	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	NULL
+misri	misri	kasimin	9.00125E+11					9	my					53	0	2/23/2012	40500	NULL	NULL	NULL			NULL	NULL		NULL	NULL			NULL	NULL
+mnajib.mr	Mohd Najib	Mohd	1					8	my							11/26/2010	40600	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	OK	NULL
+mnuriznei.h	Muhammad Nur Iznei	Hashim	8.70522E+11				0	2	my	331662991		331678755	199804830	43	0	3/20/2013	40100	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL	mnuriznei.h@feldaglobal.com		NULL	NULL
+mohdnizam	Mohd Nizam	Khir	870317-56-5333				0	2	my					6	0	7/10/2012	40200	NULL	NULL	NULL	SPM		NULL	NULL	1	NULL	NULL			NULL	NULL
+mohdtarmizi	mohd tarmizi	mohd fuad	11					0						15	0	3/12/2009	40100	NULL	NULL	NULL			NULL	NULL		NULL	NULL			OK	2
+mokhtar.s	Mokhtar	Sekak	6.40507E+11	Felda Transport Services Sdn. Bhd.	"Tingkat 2, Balai Felda, Jalan Gurney 01"	54000	1	1	my	03-29630088	121	03-26930602	019-3324248	63	0	12/5/2007	40100	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL	mokhtar.sa@felda.net.my		OK	7
+murad.h	Abd Murad	Hussin	641228-06-5215					0						2	0	12/7/2005	40500	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	2
+mutalib.h	Abd. Mutalib	.	-					0						43	0	5/13/2008	40100	NULL	NULL	NULL			NULL	NULL		NULL	NULL			OK	9
+nazaruddin	Nazaruddin	Abu Bakar	11					0						2	0	7/26/2011	40100	NULL	NULL	NULL			NULL	NULL		NULL	NULL			NULL	NULL
+nazmi.mi	Mohd Nazmi	Mohd Isa	0					9	my					52	0	3/20/2014	40500	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	NULL
+nizam.a	Afzainizam	Ahmad	770806-12-6069					12	my					4	0	7/30/2007	40910	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	2
+nizam.s	Sarnizam	Saron	7.40409E+11											17		6/18/2008	41000	NULL	NULL	NULL		NULL	ADMIN	NULL		NULL	NULL	NULL	NULL	NULL	2
+noor.o	md noor	omar	590817-03-5463				0	8	my					53	0	11/8/2005	40600	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	2
+noor.w	Noorisah	Wahab	6.81235E+11					14	my					53		4/9/2018	40800	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+nooranida.na	Nooranida	Nurul Anwar	881101-35-5146											41		2/13/2012	40800	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+norasmadi.h	Norasmadi	hassan	89898989898					2	my					2		1/26/2016	40200	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+norazam	Norazam	Kachong	11					0						40	0	11/17/2009	40200	NULL	NULL	NULL			NULL	NULL		NULL	NULL			NULL	2
+noraziah.a	Noraziah	Ali	620510-05-5106				0	8	my					52	0	11/8/2005	40600	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	2
+noraziman.r	Mohd Noraziman	Ramly	870515-10-5485					0						4	0	11/17/2009	40600	NULL	NULL	NULL			NULL	NULL		NULL	NULL			NULL	2
+norazman.k	Norazman	Kamarudin	710825-08-6061	Lot 621-A	Kg Balok	26100		8	my				016-9354348	52	0	11/8/2005	40600	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	2
+norehan.d	Norehan	Derus	8.08088E+11					12	my					5		6/9/2016	40940	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+normala.m	Normala	Haji Mahmood	561006-10-6130	Depot Kuantan				8	my					41	0	11/8/2005	40600	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	2
+norsam	Norsam	Hussin	631214-05-5367					1	my					63	0	3/25/2010	40100	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			OK	7
+nuraini.s	Nuraini Safirah	Salamat	8999989889					2	my					7		8/2/2016	40200	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+nursuhada.mi	Nursuhada	Md Isa	0					8	my					4		2/26/2014	40600	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+othman.a	Othman	Ali	580309-01-6291					0						7	0	12/7/2005	40500	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			OK	2
+othman.s	Othman	Said	1000000000					2	my					40		3/20/2013	40200	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+radzali.a	Radzali	Abas	12					9	my					5	0	4/8/2013	40500	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			OK	NULL
+rahmad	Rahmad Faizal	Nordin	8.41003E+11					2	my					4		8/19/2016	40200	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+rahmad.d	Rahmad Azril	Dzulkafli	9.00604E+11					8	my					7		7/5/2017	40600	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+ramlee.m	Ramlee	Mahmood	1					0						50	0	5/17/2007	40100	NULL	NULL	NULL			NULL	NULL		NULL	NULL			NULL	2
+razak	Abdul Razak	Roseli	8645656532					14	my					65		7/12/2018	40800	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+razak.r	Abdul Razak	Roseli	8.60905E+11				35	14	my					65	0	7/12/2018	40800	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	NULL
+ridzwan.t	Mohd Ridzwan	Talib	11				7	0		2693 0088	3707	2693 0602	012 6417746	15	0	9/22/2011	40100	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL	ridzwan.t@felda.net.my		OK	NULL
+rogayah	Rogayah	Abd Rashid	11					0						4	0	7/26/2011	40100	NULL	NULL	NULL			NULL	NULL		NULL	NULL			NULL	NULL
+saharani	Saharani	Baharudin	11					0						4	0	11/24/2011	40200	NULL	NULL	NULL			NULL	NULL		NULL	NULL			NULL	NULL
+saharudin.m	saharudin	-	-					0						52	0	5/13/2010	40500	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			OK	NULL
+sahberi.a	Sahberi	Mohd Amin	630511-06-5559					8	my					4	0	11/8/2005	40600	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	2
+saiful	Saiful	Helmi	-					0						4	0	9/12/2007	40200	NULL	NULL	NULL			NULL	NULL		NULL	NULL			NULL	2
+sani	Abdullah Sani	Johor	781222-08-6589					9	my					45	0	3/5/2012	40500	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			OK	NULL
+sarimah	sarimah	yahaya	8.70623E+11					8	my					4		1/25/2017	40620	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+shafiq.s	Shafiq Izwan	Sharom	11					0						4	0	9/19/2011	40600	NULL	NULL	NULL			NULL	NULL		NULL	NULL			NULL	NULL
+shahril.a	Mohd Shahril Anuar	Mohd Hasan	11				0	8	my					6	0	10/3/2012	40600	NULL	NULL	NULL		NULL	NULL	NULL		NULL	NULL		NULL	NULL	NULL
+shawal.a	Mohd Shawal	Aman	9.87768E+11					9	my					53		11/2/2015	40500	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+shiva	Shiva	Manikam	A3582376	34 JALAN 6 TAMAN SHAH JAYA	BATU 10 JALAN CHERAS	43200	5	2	my				013-3582377	10	0	3/20/2006	40100	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL	shiva.m@feldaglobal.com		OK	2
+shukri.mh	Shukri	Mohd Hashim	780311-06-5371					1	my					59		10/24/2013	40100	NULL	NULL	NULL	Degree	NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	OK	NULL
+sidah	Nor Hasidah	Abdul Salim	8.00323E+11					9	my					2	0	1/3/2006	40500	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	2
+sufian.m	sufian	mansor	0					8	my					4		2/26/2014	40600	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+sufian.s	Sufian	Shim	720113-12-5483					12	my					7	0	7/30/2007	40910	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	2
+suhaimi	Suhaimi	Tambong	-					12	my					10	0	8/23/2013	40910	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			OK	NULL
+sukirman.m	Sukirman	Muhtar	7.70219E+11	"MDLD 1846, LORONG SETIA 1,"	TAMAN SETIA	91125		12	my	89883606		89886370	198929170	13	0	1/6/2009	40500	NULL	NULL	NULL			NULL	NULL		NULL	NULL	sukirman.m@feldaglobal.com		OK	2
+syahmi.ar	syahmi	ahmad ramly	870912-06-5579					1	my					60	0	8/24/2015	40910	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	NULL
+syahril.a	Mohd Shahril Anuar	Mohd Hasan	9889899898				0	8	my					5	0	8/4/2016	40600	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL		NULL	NULL	NULL
+syaiful.my	Mohd Syaiful	Yusof	11					8	my					4		9/23/2014	40600	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+syikin.a	Nurasyikin	Abdullah	700405-12-5184					12	my					3	0	7/30/2007	40910	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	2
+syuhada	Syuhada	Sudirman	891109-08-6402					14	my					41	0	2/14/2012	44213	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	NULL
+tasrifah.pi	Tasrifah	Piahat	631201-10-7906					0						3	0	4/12/2007	40100	NULL	NULL	NULL			NULL	NULL		NULL	NULL			NULL	2
+taufiq.m	Muhammad Taufiq	Mad Rusli	1010101010					2	my						0	1/19/2015	44213	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	NULL
+tawfik.m	Mohd tawfik	mokhtar	841025-14-6863					1	my					62		8/6/2014	40100	NULL	NULL	NULL		NULL	NULL	NULL	3	NULL	NULL	NULL	NULL	NULL	NULL
+tuan.ty	Tuan Shamsudin	Tuan Yaacob	1					0						51	0	4/13/2007	40100	NULL	NULL	NULL			NULL	NULL		NULL	NULL			OK	7
+w.mangsor	Wan Mangsor	Wan Husin	580319-09-5085					9	my					41	0	1/25/2006	40500	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NO	2
+wafi.n	Mohd Wafi Nazrin	Abdullah Rashid	930406-14-5455					8	my					7		7/26/2016	40600	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+wan.a	Wan Ahmad	Wan Ngah	11					0						45	0	5/10/2010	40600	NULL	NULL	NULL			NULL	NULL		NULL	NULL			OK	NULL
+zaherul.z	Muhammad Zaherul Adlie	Zulkifle	94050555896	Felda Transport Services Sdn Bhd	"Tingkat 5, Balai Felda, Jalan Gurney 1"	54000		1	my					63	0	3/20/2018	40600	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			OK	NULL
+zahiruddin.z	Mohd Zahiruddin	Zakaria	11					0						10	0	2/16/2011	40600	NULL	NULL	NULL			NULL	NULL		NULL	NULL	zahiruddin.z@felda.net.my		OK	NULL
+zaidi.s	Mohd Zaidi	Suleiman	640808-01-5463					9	my					41		06/19/2006	40500	NULL	NULL	NULL			NULL	NULL	1	NULL	NULL			NULL	2
+zaifitri	Zaifitri	Md Nor	11					0						4	0	11/24/2011	40200	NULL	NULL	NULL			NULL	NULL		NULL	NULL			NULL	NULL
+zailan	Zailan	Aziz	-					0						2	0	9/12/2007	40200	NULL	NULL	NULL			NULL	NULL		NULL	NULL			NULL	2
+zainora.b	Zainora	Bahimin	1					0						5	0	5/17/2007	40100	NULL	NULL	NULL			NULL	NULL		NULL	NULL			NULL	2
+zamri	Mohd Zamri	Hashim	0-					9	my							11/29/2013	40500	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	NULL
+zamros.mr	Zamros Rofdi	Mohd Ros	-											1		7/2/2008	40100	NULL	NULL	NULL		NULL	NULL	NULL	1	NULL	NULL	NULL	NULL	NULL	2
+zulhilmi.a	Mohd Zulhilmi	Azman	870919-06-5483				0	1		019-822 5720				14	0	2/16/2011	40100	NULL	NULL	NULL			NULL	NULL		NULL	NULL	zulhilmi.a@feldaglobal.com		OK	NULL
+zulkefli	Zulkefli	Mohamad	1010101					12	my					2		5/25/2015	40910	NULL	NULL	NULL		NULL	NULL	NULL		NULL	NULL	NULL	NULL	NULL	NULL
+zuraidah	zuraidah	Yussof	610904-01-5060					0						57	0	2/24/2012	40300	NULL	NULL	NULL	Clerk Courier		NULL	NULL	1	NULL	NULL			NULL	NULL
