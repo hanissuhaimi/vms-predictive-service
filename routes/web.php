@@ -1,97 +1,41 @@
 <?php
 
-use App\Http\Controllers\PredictionController;
-use App\Http\Controllers\VehicleHistoryController;
-use App\Http\Controllers\MaintenanceAnalyticsController;
-use App\Http\Controllers\DepotController;
-use App\Http\Controllers\VehicleSearchController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PredictionController;
+use App\Http\Controllers\MaintenanceController;
+use App\Http\Controllers\FleetAnalysisController;
+use App\Models\ServiceRequest;
+use Illuminate\Http\Request;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
+// Main application routes
+Route::get('/', [PredictionController::class, 'index'])->name('prediction.index');
+Route::post('/predict', [PredictionController::class, 'predict'])->name('prediction.predict');
+Route::get('/prediction/{vehicle}/{mileage}', [PredictionController::class, 'showPrediction'])->name('prediction.show');
+Route::post('/quick-save', [PredictionController::class, 'quickSave'])->name('prediction.quickSave');
 
-// Homepage redirect
-Route::get('/', function () {
-    return redirect()->route('prediction.index');
-});
+// Maintenance history routes
+Route::get('/maintenance-history/{vehicle}/{mileage?}', [PredictionController::class, 'maintenanceHistory'])->name('maintenance.history');
+Route::get('/maintenance-history/{vehicle}/export', [PredictionController::class, 'exportHistory'])->name('maintenance.history.export');
 
-// ========================================
-// PREDICTION ROUTES
-// ========================================
+// Service Request routes (updated for existing table)
+Route::get('/maintenance', [MaintenanceController::class, 'index'])->name('maintenance.index');
+Route::get('/maintenance/create', [MaintenanceController::class, 'create'])->name('maintenance.create');
+Route::post('/maintenance/store', [MaintenanceController::class, 'store'])->name('maintenance.store');
+Route::get('/maintenance/{id}', [MaintenanceController::class, 'show'])->name('maintenance.show');
 
-Route::prefix('prediction')->name('prediction.')->group(function () {
-    Route::get('/', [PredictionController::class, 'index'])->name('index');
-    Route::post('/predict', [PredictionController::class, 'predict'])->name('predict');
-    Route::get('/result/{vehicle}/{mileage}', [PredictionController::class, 'show'])
-         ->name('show')
-         ->where(['vehicle' => '[A-Za-z0-9]+', 'mileage' => '[0-9]+']);
-});
-
-// ========================================
-// MAINTENANCE HISTORY ROUTES
-// ========================================
-
-Route::prefix('maintenance')->name('maintenance.')->group(function () {
-    Route::get('/history/{vehicle}', [VehicleHistoryController::class, 'show'])
-         ->name('history')
-         ->where('vehicle', '[A-Za-z0-9]+');
+Route::prefix('fleet')->name('fleet.')->group(function () {
+    Route::get('/analysis', [FleetAnalysisController::class, 'index'])->name('analysis.index');
+    Route::get('/analysis/all', [FleetAnalysisController::class, 'analyzeAll'])->name('analysis.all');
     
-    Route::get('/history/{vehicle}/export', [VehicleHistoryController::class, 'export'])
-         ->name('history.export')
-         ->where('vehicle', '[A-Za-z0-9]+');
+    // Future fleet analysis routes (placeholder)
+    Route::get('/analysis/performance', [FleetAnalysisController::class, 'performance'])->name('analysis.performance');
+    Route::get('/analysis/costs', [FleetAnalysisController::class, 'costs'])->name('analysis.costs');
+    Route::get('/analysis/maintenance-trends', [FleetAnalysisController::class, 'maintenanceTrends'])->name('analysis.maintenance-trends');
+    Route::get('/analysis/export', [FleetAnalysisController::class, 'export'])->name('analysis.export');
 });
 
-// ========================================
-// ANALYTICS ROUTES
-// ========================================
+// API route for vehicle history
+Route::get('/api/vehicle-history/{vehicle}', [PredictionController::class, 'getVehicleHistory'])->name('api.vehicle.history');
 
-Route::prefix('analytics')->name('analytics.')->group(function () {
-    Route::get('/dashboard', [MaintenanceAnalyticsController::class, 'dashboard'])
-         ->name('dashboard');
-});
-
-// ========================================
-// DEPOT MANAGEMENT ROUTES
-// ========================================
-
-Route::prefix('depots')->name('depots.')->group(function () {
-    Route::get('/', [DepotController::class, 'index'])->name('index');
-    Route::get('/{depot}', [DepotController::class, 'show'])
-         ->name('show')
-         ->where('depot', '[0-9]+');
-});
-
-// ========================================
-// VEHICLE SEARCH ROUTES
-// ========================================
-
-Route::prefix('vehicles')->name('vehicles.')->group(function () {
-    Route::get('/search', [VehicleSearchController::class, 'search'])->name('search');
-    Route::get('/maintenance-needed', [VehicleSearchController::class, 'needingMaintenance'])
-         ->name('maintenance-needed');
-});
-
-// ========================================
-// ANALYTICS ROUTES
-// ========================================
-
-Route::prefix('analytics')->name('analytics.')->group(function () {
-    Route::get('/dashboard', [MaintenanceAnalyticsController::class, 'dashboard'])
-         ->name('dashboard');
-});
-
-Route::get('/analytics/test', function() {
-    return response()->json([
-        'status' => 'success',
-        'message' => 'Analytics system is working',
-        'timestamp' => now()->format('Y-m-d H:i:s'),
-        'test_data' => [
-            'total_vehicles' => 100,
-            'total_services' => 88000,
-            'processing_time' => '0.5 seconds'
-        ]
-    ]);
-})->name('analytics.test');
+Route::get('/prediction', [PredictionController::class, 'index'])->name('prediction.index');
+Route::post('/prediction/predict', [PredictionController::class, 'predict'])->name('prediction.predict');

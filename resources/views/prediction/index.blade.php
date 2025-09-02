@@ -103,14 +103,33 @@
                         </small>
                     </div>
                     <div class="col-md-4 text-md-end">
-                        <a href="{{ route('analytics.dashboard') }}" class="btn btn-success btn-lg">
+                        <a href="{{ route('fleet.analysis.index') }}" class="btn btn-success btn-lg">
                             <i class="fas fa-chart-line"></i> Fleet Analysis
                         </a>
-                        <div class="mt-2">
-                            <small class="text-muted">
-                                <i class="fas fa-clock"></i> This may take up to 2-3 minutes
-                            </small>
-                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="row justify-content-center mt-4">
+    <div class="col-lg-8">
+        <div class="card bg-light">
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <h4 class="text-primary">{{ \App\Models\FleetAnalysis::getTotalVehicles() }}</h4>
+                        <small class="text-muted">Total Vehicles in Fleet</small>
+                    </div>
+                    <div class="col-md-4">
+                        <h4 class="text-info">{{ number_format(\App\Models\FleetAnalysis::getTotalServices()) }}</h4>
+                        <small class="text-muted">Total Services Recorded</small>
+                    </div>
+                    <div class="col-md-4">
+                        <h4 class="text-success">{{ \App\Models\FleetAnalysis::calculateFleetHealthScore() }}%</h4>
+                        <small class="text-muted">Fleet Health Score</small>
                     </div>
                 </div>
             </div>
