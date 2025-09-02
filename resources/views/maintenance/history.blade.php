@@ -339,7 +339,7 @@
                                 <option value="">All Types</option>
                                 <option value="Maintenance">🔧 Maintenance</option>
                                 <option value="Repair">⚙️ Repair</option>
-                                <option value="Cleaning">🧽 Cleaning/Washing</option>
+                                <option value="Cleaning/Washing">🧽 Cleaning/Washing</option>
                                 <option value="Inspection">🔍 Inspection</option>
                                 <option value="Other">📋 Other</option>
                             </select>

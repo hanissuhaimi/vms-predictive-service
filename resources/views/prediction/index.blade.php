@@ -103,7 +103,7 @@
                         </small>
                     </div>
                     <div class="col-md-4 text-md-end">
-                        <a href="{{ route('fleet.analysis.index') }}" class="btn btn-success btn-lg">
+                        <a href="{{ route('analytics.dashboard') }}" class="btn btn-success btn-lg">
                             <i class="fas fa-chart-line"></i> Fleet Analysis
                         </a>
                     </div>
@@ -124,7 +124,7 @@
                         <small class="text-muted">Total Vehicles in Fleet</small>
                     </div>
                     <div class="col-md-4">
-                        <h4 class="text-info">{{ number_format(\App\Models\FleetAnalysis::getTotalServices()) }}</h4>
+                        <h4 class="text-info">{{ number_format(\App\Models\FleetAnalysis::getTotalMaintenanceOrder()) }}</h4>
                         <small class="text-muted">Total Services Recorded</small>
                     </div>
                     <div class="col-md-4">
